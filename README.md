@@ -123,6 +123,8 @@ java -jar build/libs/app-fat.jar
 ```
 
 ## License
+Apache License
+Version 2.0
 
 Voir rubrique
 
