@@ -50,10 +50,10 @@ jobs:
         
         LABEL org.opencontainers.image.title="AsciiFrame"
         LABEL org.opencontainers.image.description="Zero-config AsciiDoc renderer with beautiful themes and Kroki integration"
-        LABEL org.opencontainers.image.url="https://github.com/remixxx31/asciiframework"
-        LABEL org.opencontainers.image.source="https://github.com/remixxx31/asciiframework"
+        LABEL org.opencontainers.image.url="https://github.com/remixxx31/asciiframe-public"
+        LABEL org.opencontainers.image.source="https://github.com/remixxx31/asciiframe-public"
         LABEL org.opencontainers.image.vendor="AsciiFrame"
-        LABEL org.opencontainers.image.licenses="MIT"
+        LABEL org.opencontainers.image.licenses="Apache-2.0"
         
         WORKDIR /app
         
