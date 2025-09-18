@@ -124,7 +124,7 @@ java -jar build/libs/app-fat.jar
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file.
+Voir rubrique
 
 ## Links
 
