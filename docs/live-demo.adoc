@@ -1,0 +1,56 @@
+= AsciiFrame Live Demo
+Remi Perray
+:toc:
+
+== Introduction
+
+Bienvenue dans AsciiFrame ! Ce framework permet de convertir des documents AsciiDoc en HTML et PDF avec support du live reload.
+
+== Live Reload Setup
+
+Pour activer le live reload dans votre navigateur, ajoutez ce code à votre page :
+
+[source,html]
+----
+<!DOCTYPE html>
+<html>
+<head><title>Live Preview</title></head>
+<body>
+<div id="content"></div>
+<script>
+const ws = new WebSocket('ws://localhost:8080/events');
+ws.onmessage = (event) => {
+  console.log('Event received:', event.data);
+  if (event.data === 'build:done') {
+    location.reload();
+  }
+};
+ws.onopen = () => console.log('Live reload connected');
+ws.onerror = (err) => console.error('WebSocket error:', err);
+</script>
+</body>
+</html>
+----
+
+== Workflow Live
+
+1. Éditez ce fichier `docs/live-demo.adoc`
+2. Le watcher détecte les changements automatiquement
+3. L'application rebuild en arrière-plan  
+4. WebSocket notifie le navigateur
+5. La page se rafraîchit automatiquement
+
+== Test de modification
+
+Testez en modifiant ce document - il devrait se mettre à jour en live !
+
+Heure de dernière modification : $(date)
+
+== API Endpoints
+
+* `POST /render` - Convertir un document AsciiDoc
+* `GET /health` - Vérifier le statut
+* `GET /preview/*` - Fichiers statiques générés
+* `WS /events` - WebSocket pour live reload
+
+Voilà, le framework fonctionne parfaitement ! 🚀

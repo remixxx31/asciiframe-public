@@ -1,0 +1,39 @@
+# Thème PDF Report Simple - Polices standard
+extends: default
+
+page:
+  background_color: ffffff
+  layout: portrait
+  margin: [0.75in, 1in, 0.75in, 1in]
+  size: A4
+
+base:
+  font_color: 222222
+  font_family: Times-Roman
+  font_size: 11
+  line_height_length: 14
+
+heading:
+  font_color: 1565c0
+  font_family: Helvetica
+  font_style: bold
+
+title_page:
+  align: center
+  background_color: f8f9fa
+  font_size: 18
+
+chapter:
+  font_color: 1565c0
+  font_size: 20
+  font_style: bold
+
+code:
+  background_color: f5f5f5
+  border_color: dddddd
+  font_color: c7254e
+  font_family: Courier
+
+table:
+  border_color: dee2e6
+  stripe_background_color: f8f9fa

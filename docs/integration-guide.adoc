@@ -1,0 +1,321 @@
+= Guide d'Intégration AsciiFrame
+:toc:
+:icons: font
+
+== Vue d'ensemble
+
+AsciiFrame peut être intégré dans vos projets de plusieurs façons sans polluer votre base de code.
+
+== Option 1: Service Docker Autonome (Recommandé)
+
+=== Avantages
+- Isolation complète de votre code
+- Aucune dépendance dans votre projet
+- Scalabilité indépendante
+- Mise à jour facile
+
+=== Docker Compose dans votre projet
+
+[source,yaml]
+----
+# docker-compose.yml de votre projet
+version: '3.8'
+services:
+  your-app:
+    build: .
+    ports: ["3000:3000"]
+    depends_on:
+      - asciiframe
+  
+  asciiframe:
+    image: asciiframe/renderer:latest
+    ports: ["8080:8080"]
+    volumes:
+      - ./docs:/work/docs
+      - ./generated:/work/build
+      - ./asciiframe-config.yml:/work/config.yml:ro
+    environment:
+      - CONFIG_PATH=/work/config.yml
+----
+
+=== Utilisation dans votre code
+
+[source,javascript]
+----
+// Node.js example
+const axios = require('axios');
+
+async function renderDocument(entry, formats = ['html']) {
+  const response = await axios.post('http://asciiframe:8080/render', {
+    entry,
+    formats
+  });
+  return response.data;
+}
+
+// Usage
+const result = await renderDocument('docs/my-doc.adoc', ['html', 'pdf']);
+console.log('Generated:', result.htmlPath, result.pdfPath);
+----
+
+[source,python]
+----
+# Python example
+import requests
+
+def render_document(entry, formats=['html']):
+    response = requests.post('http://asciiframe:8080/render', json={
+        'entry': entry,
+        'formats': formats
+    })
+    return response.json()
+
+# Usage
+result = render_document('docs/my-doc.adoc', ['html', 'pdf'])
+print(f"Generated: {result['htmlPath']}, {result['pdfPath']}")
+----
+
+== Option 2: Microservice Kubernetes
+
+=== Deployment
+
+[source,yaml]
+----
+# asciiframe-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: asciiframe
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: asciiframe
+  template:
+    metadata:
+      labels:
+        app: asciiframe
+    spec:
+      containers:
+      - name: asciiframe
+        image: asciiframe/renderer:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: CONFIG_PATH
+          value: /config/config.yml
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: docs
+          mountPath: /work/docs
+      volumes:
+      - name: config
+        configMap:
+          name: asciiframe-config
+      - name: docs
+        persistentVolumeClaim:
+          claimName: docs-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: asciiframe-service
+spec:
+  selector:
+    app: asciiframe
+  ports:
+  - port: 8080
+    targetPort: 8080
+----
+
+== Option 3: JAR Library dans votre projet
+
+=== Avantages
+- Intégration directe dans votre JVM
+- Pas de réseau entre composants
+- Configuration unifiée
+
+=== Dans votre build.gradle
+
+[source,gradle]
+----
+dependencies {
+    implementation 'co.remi:asciiframe-core:1.0.0'
+    // Vos autres dépendances...
+}
+----
+
+=== Utilisation
+
+[source,java]
+----
+// Dans votre code Java
+import co.remi.asciiframe.AsciiFrameRenderer;
+import co.remi.asciiframe.RenderConfig;
+
+public class MyDocumentService {
+    private final AsciiFrameRenderer renderer;
+    
+    public MyDocumentService() {
+        RenderConfig config = RenderConfig.builder()
+            .entry("docs/index.adoc")
+            .outDir("build/docs")
+            .theme("documentation")
+            .build();
+        this.renderer = new AsciiFrameRenderer(config);
+    }
+    
+    public RenderResult generateDocs(String entry) {
+        return renderer.render(entry, List.of("html", "pdf"));
+    }
+}
+----
+
+== Option 4: Service Séparé avec API Client
+
+=== AsciiFrame comme service indépendant
+
+[source,bash]
+----
+# Terminal 1 - Service AsciiFrame
+cd asciiframe/
+java -jar asciiframe.jar
+
+# Terminal 2 - Votre application
+cd your-project/
+npm start  # ou votre commande de démarrage
+----
+
+=== Client lightweight dans votre projet
+
+[source,javascript]
+----
+// asciiframe-client.js - Un seul fichier
+class AsciiFrameClient {
+  constructor(baseUrl = 'http://localhost:8080') {
+    this.baseUrl = baseUrl;
+  }
+  
+  async render(entry, formats = ['html']) {
+    const response = await fetch(`${this.baseUrl}/render`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ entry, formats })
+    });
+    return response.json();
+  }
+  
+  async health() {
+    const response = await fetch(`${this.baseUrl}/health`);
+    return response.text();
+  }
+  
+  previewUrl(file) {
+    return `${this.baseUrl}/preview/${file}`;
+  }
+}
+
+module.exports = AsciiFrameClient;
+----
+
+== Option 5: GitHub Actions / CI/CD
+
+=== Pour génération de documentation
+
+[source,yaml]
+----
+# .github/workflows/docs.yml
+name: Generate Documentation
+on:
+  push:
+    paths: ['docs/**']
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Start AsciiFrame
+      run: |
+        docker run -d --name asciiframe \
+          -v $PWD/docs:/work/docs \
+          -v $PWD/generated:/work/build \
+          -p 8080:8080 \
+          asciiframe/renderer:latest
+        
+    - name: Wait for service
+      run: |
+        until curl -s http://localhost:8080/health; do
+          sleep 2
+        done
+        
+    - name: Generate docs
+      run: |
+        curl -X POST http://localhost:8080/render \
+          -H "Content-Type: application/json" \
+          -d '{"entry":"docs/index.adoc","formats":["html","pdf"]}'
+          
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./generated
+----
+
+== Comparaison des Approches
+
+[cols="1,3,3,3"]
+|===
+|Approche |Isolation |Complexité |Use Case
+
+|Docker Service
+|⭐⭐⭐
+|⭐⭐
+|Production, microservices
+
+|K8s Microservice  
+|⭐⭐⭐
+|⭐⭐⭐
+|Environnements cloud
+
+|JAR Library
+|⭐
+|⭐
+|Applications Java
+
+|Service Séparé
+|⭐⭐
+|⭐
+|Développement, prototypage
+
+|CI/CD
+|⭐⭐⭐
+|⭐⭐
+|Documentation statique
+|===
+
+== Recommandations
+
+=== Pour la Production
+👉 **Docker Service** - Isolation maximale, pas de pollution
+
+=== Pour le Développement  
+👉 **Service Séparé** - Simple et flexible
+
+=== Pour les Apps Java
+👉 **JAR Library** - Intégration native
+
+=== Pour la Documentation
+👉 **CI/CD** - Génération automatique
+
+== Configuration Minimale
+
+Quelque soit l'approche, vous n'avez besoin que de :
+
+1. **Un fichier config** (`asciiframe-config.yml`)
+2. **Vos documents** (dossier `docs/`)  
+3. **Un client HTTP** (quelques lignes de code)
+
+Aucune pollution de votre base de code ! 🎯

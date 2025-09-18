@@ -1,0 +1,228 @@
+name: Container Registry
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    name: Build and Push Container
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup JDK 23 (Temurin)
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '23'
+        cache: 'gradle'
+        
+    - name: Verify java
+      run: java -version
+      
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
+        
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v3
+      
+    - name: Build application JAR
+      run: ./gradlew clean shadowJar --no-daemon
+      
+    - name: Create simple Dockerfile for GHCR
+      run: |
+        cat > Dockerfile.ghcr << 'EOF'
+        FROM eclipse-temurin:23-jre-alpine
+        
+        LABEL org.opencontainers.image.title="AsciiFrame"
+        LABEL org.opencontainers.image.description="Zero-config AsciiDoc renderer with beautiful themes and Kroki integration"
+        LABEL org.opencontainers.image.url="https://github.com/remixxx31/asciiframework"
+        LABEL org.opencontainers.image.source="https://github.com/remixxx31/asciiframework"
+        LABEL org.opencontainers.image.vendor="AsciiFrame"
+        LABEL org.opencontainers.image.licenses="MIT"
+        
+        WORKDIR /app
+        
+        # Copy the pre-built JAR
+        COPY build/libs/app-fat.jar app.jar
+        
+        # Copy themes and config
+        COPY themes/ themes/
+        COPY config.yml config.yml.template
+        
+        # Create directories and set permissions
+        RUN mkdir -p /work/docs /work/build /work/.cache && \
+            addgroup -g 1001 asciiframe && \
+            adduser -u 1001 -D -G asciiframe asciiframe && \
+            chown -R asciiframe:asciiframe /app /work
+        
+        # Switch to non-root user
+        USER asciiframe
+        
+        # Environment variables
+        ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+        ENV CONFIG_PATH="/work/config.yml"
+        ENV WORK_DIR="/work"
+        
+        EXPOSE 8080
+        
+        # Health check
+        HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+            CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+        
+        # Start application
+        CMD ["sh", "-c", "if [ ! -f \"$CONFIG_PATH\" ]; then export CONFIG_PATH=\"/app/config.yml.template\"; fi; java $JAVA_OPTS -jar /app/app.jar"]
+        
+        # Volume mount points
+        VOLUME ["/work/docs", "/work/build", "/work/.cache"]
+        EOF
+        
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}},enable={{is_default_branch}}
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=sha,prefix={{branch}}-
+        labels: |
+          org.opencontainers.image.title=AsciiFrame
+          org.opencontainers.image.description=Zero-config AsciiDoc renderer with beautiful themes and Kroki integration
+          org.opencontainers.image.vendor=AsciiFrame
+          org.opencontainers.image.url=https://github.com/${{ github.repository }}
+          org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/blob/main/README.md
+          
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: Dockerfile.ghcr
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        build-args: |
+          BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
+          VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+          REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
+
+    - name: Generate container summary
+      run: |
+        echo "## 📦 Container Images Published" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Registry: GitHub Container Registry" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Available tags:**" >> $GITHUB_STEP_SUMMARY
+        echo '${{ steps.meta.outputs.tags }}' | while read -r tag; do
+          echo "- \`docker pull ${tag}\`" >> $GITHUB_STEP_SUMMARY
+        done
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Quick Start" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+        echo "# Run with default configuration" >> $GITHUB_STEP_SUMMARY
+        echo "docker run -p 8080:8080 \\" >> $GITHUB_STEP_SUMMARY
+        echo "  -v \$PWD/docs:/work/docs \\" >> $GITHUB_STEP_SUMMARY
+        echo "  -v \$PWD/build:/work/build \\" >> $GITHUB_STEP_SUMMARY
+        echo "  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "# Check health" >> $GITHUB_STEP_SUMMARY
+        echo "curl http://localhost:8080/health" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+  test-container:
+    name: Test Container
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event_name == 'pull_request'
+    
+    services:
+      kroki:
+        image: yuzutech/kroki
+        ports:
+          - 8000:8000
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Test container functionality
+      run: |
+        # Use the PR-specific tag
+        IMAGE_TAG="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.number }}"
+        
+        echo "Testing image: $IMAGE_TAG"
+        
+        # Start container
+        docker run -d --name asciiframe-test \
+          --network host \
+          -v $PWD/docs:/work/docs \
+          -v $PWD/test-output:/work/build \
+          $IMAGE_TAG
+          
+        # Wait for service to be ready
+        echo "Waiting for service to start..."
+        timeout 60 bash -c 'until curl -f http://localhost:8080/health; do sleep 2; done'
+        
+        # Test health endpoint
+        echo "Testing health endpoint..."
+        curl -f http://localhost:8080/health
+        
+        # Test render endpoint if docs exist
+        if [ -f "docs/index.adoc" ] || [ -f "docs/live-demo.adoc" ]; then
+          echo "Testing render endpoint..."
+          ENTRY_FILE="docs/index.adoc"
+          [ -f "docs/live-demo.adoc" ] && ENTRY_FILE="docs/live-demo.adoc"
+          
+          curl -X POST http://localhost:8080/render \
+            -H "Content-Type: application/json" \
+            -d "{\"entry\":\"$ENTRY_FILE\",\"formats\":[\"html\"]}" \
+            | grep -q '"success":true'
+            
+          echo "Render test passed!"
+        fi
+        
+        echo "Container test completed successfully!"
+        
+        # Cleanup
+        docker stop asciiframe-test
+        docker rm asciiframe-test
