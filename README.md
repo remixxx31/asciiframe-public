@@ -1,3 +1,7 @@
+![Beta](https://img.shields.io/badge/status-beta-yellow.svg)
+
+> ⚠️ **BETA NOTICE**: This project is currently in **BETA**. Features and APIs may change at any time. Use in production is not recommended.
+
 # AsciiFrame
 
 A fast, zero-configuration AsciiDoc renderer with beautiful themes and live preview capabilities.
