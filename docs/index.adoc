@@ -1,0 +1,76 @@
+= Asciiframe MVP (Shadow + Disk Cache)
+Remi Perray
+:toc:
+:icons: font
+:source-highlighter: rouge
+:sectnums:
+:doctype: book
+
+== Introduction
+
+This build uses a fat-jar (shadow) and persists diagram renders to disk.
+
+== Mermaid Example
+
+[mermaid, target="mermaid-diagram", format=svg]
+----
+graph TD
+  A[AsciiDoc] --> B[HTML]
+  A --> C[PDF]
+  B --> D[Live Preview]
+  C --> E[Atomic Write]
+----
+
+== PlantUML Example
+
+[plantuml, target="sequence-diagram", format=svg]
+----
+@startuml
+actor User
+participant API as "Render API"
+participant Worker as "Render Worker"
+User -> API: POST /render
+API -> Worker: enqueue job
+Worker -> Worker: build HTML
+Worker -> Worker: build PDF
+Worker -> API: artifacts(paths, cacheHit)
+@enduml
+----
+
+== Live Reload Setup
+
+Pour activer le live reload dans votre navigateur, ajoutez ce code à votre page :
+
+[source,html]
+----
+<!DOCTYPE html>
+<html>
+<head><title>Live Preview</title></head>
+<body>
+<div id="content"></div>
+<script>
+const ws = new WebSocket('ws://localhost:8080/events');
+ws.onmessage = (event) => {
+  console.log('Event received:', event.data);
+  if (event.data === 'build:done') {
+    location.reload();
+  }
+};
+ws.onopen = () => console.log('Live reload connected');
+ws.onerror = (err) => console.error('WebSocket error:', err);
+</script>
+</body>
+</html>
+----
+
+== Workflow Live
+
+1. Éditez ce fichier `docs/index.adoc`
+2. Le watcher détecte les changements automatiquement
+3. L'application rebuild en arrière-plan  
+4. WebSocket notifie le navigateur
+5. La page se rafraîchit automatiquement
+
+Testez en modifiant ce document - il devrait se mettre à jour en live !
+
+include::simple.adoc[]

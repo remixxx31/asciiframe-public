@@ -1,0 +1,40 @@
+
+# Build artifacts
+.gradle/
+build/
+out/
+*.jar
+
+# Generated outputs
+build_artifacts/
+.cache/
+/docs/.cache/
+/docs/build/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Runtime files
+tmp/
+*.tmp
+*.pid
+
+# Local config overrides
+config.local.yml
+docker-compose.override.yml
+
+# Development
+.env
+.env.local

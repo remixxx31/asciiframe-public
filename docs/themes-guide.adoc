@@ -1,0 +1,155 @@
+= Guide des Thèmes AsciiFrame
+:toc:
+:icons: font
+
+== Vue d'ensemble
+
+AsciiFrame propose un système de thèmes prêts à l'emploi pour personnaliser facilement l'apparence de vos documents HTML et PDF.
+
+== Configuration dans config.yml
+
+[source,yaml]
+----
+theme:
+  # Thèmes HTML prédéfinis
+  html: default  # default, dark, minimal, documentation, blog
+  
+  # Thèmes PDF
+  pdf: default   # default, report, book
+  
+  # CSS custom (optionnel - prioritaire sur html)
+  customCssPath: themes/custom.css
+----
+
+== Thèmes HTML Prédéfinis
+
+=== default
+Style moderne et propre avec :
+- Police system (-apple-system, Roboto)
+- Largeur max 900px
+- TOC avec fond gris clair
+- Code avec fond gris
+
+=== dark  
+Mode sombre avec :
+- Fond noir (#1a1a1a) 
+- Texte clair (#e1e1e1)
+- Titres bleus (#64b5f6)
+- Code vert (#81c784)
+
+=== minimal
+Style épuré avec :
+- Police serif (Georgia)
+- Largeur max 700px  
+- TOC masqué
+- Bordure gauche pour code
+
+=== documentation
+Style technique avec :
+- Police Inter
+- Titres avec gradient
+- TOC avec dégradé coloré
+- Code avec fond sombre
+
+=== blog
+Style article avec :
+- Police serif
+- Titre centré grande taille
+- Titres rouges
+- Citations stylées
+
+== Thèmes PDF
+
+=== default
+PDF standard AsciiDoc
+
+=== report  
+Rapport professionnel avec :
+- Page de titre
+- Table des matières
+- Numérotation chapitres
+
+=== book
+Style livre avec :
+- DocType book
+- Page de titre
+- TOC complet
+
+== CSS Custom
+
+=== Utilisation
+1. Créez votre fichier CSS
+2. Configurez `customCssPath` dans config.yml  
+3. Le CSS custom remplace complètement le thème prédéfini
+
+=== Variables CSS recommandées
+[source,css]
+----
+:root {
+  --primary-color: #6366f1;
+  --secondary-color: #f59e0b;
+  --text-color: #1f2937;
+  --bg-color: #ffffff;
+  --code-bg: #f3f4f6;
+  --border-color: #e5e7eb;
+}
+----
+
+=== Exemple complet
+Voir `themes/custom-example.css` pour un thème moderne avec :
+- Variables CSS
+- Gradients
+- Responsive design
+- Animations
+
+== Workflow de développement
+
+1. **Tester rapidement** : Changez `theme.html` dans config.yml
+2. **Développer custom** : Créez votre CSS dans `themes/`
+3. **Live reload** : Les changements CSS sont pris en compte automatiquement
+
+== API de rendu
+
+Le thème est appliqué via l'API `/render` :
+
+[source,bash]
+----
+curl -X POST http://localhost:8080/render \
+  -H "Content-Type: application/json" \
+  -d '{"entry":"docs/index.adoc","formats":["html","pdf"]}'
+----
+
+Le thème configuré sera automatiquement appliqué.
+
+== Accès aux fichiers générés
+
+=== HTML
+Accès direct via navigateur :
+http://localhost:8080/preview/index.html
+
+=== PDF  
+Le PDF est généré dans le répertoire de sortie configuré :
+- Local : `build_artifacts/index.pdf`
+- Docker : `/work/build/index.pdf`
+
+Servir le PDF via endpoint statique :
+http://localhost:8080/preview/index.pdf
+
+== Test des thèmes PDF
+
+Les thèmes PDF appliquent des attributs AsciiDoc différents :
+
+=== default
+- PDF standard sans configuration spéciale
+
+=== report
+- Attribut `title-page` activé
+- Table des matières générée  
+- Numérotation chapitres ("Chapter")
+
+=== book
+- DocType changé en `book`
+- Page de titre automatique
+- Structure livre avec chapitres
+
+Bien que la taille des PDFs soit similaire, le contenu et la mise en page diffèrent selon le thème choisi.

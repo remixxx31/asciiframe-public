@@ -1,0 +1,64 @@
+# Thème PDF Dark - Style sombre moderne
+extends: default
+
+page:
+  background_color: 1a202c
+  layout: portrait
+  margin: [0.75in, 1in, 0.75in, 1in]
+  size: A4
+
+base:
+  font_color: e2e8f0
+  font_family: Inter
+  font_size: 10.5
+  line_height_length: 12
+  line_height: $base_line_height_length / $base_font_size
+
+vertical_rhythm: $base_line_height_length
+
+heading:
+  font_color: 63b3ed
+  font_family: Inter
+  font_style: bold
+  margin_top: $vertical_rhythm * 1.4
+  margin_bottom: $vertical_rhythm * 0.9
+
+title_page:
+  align: center
+  background_color: 2d3748
+  font_color: ffffff
+  font_size: 18
+  margin_top: 2in
+
+chapter:
+  font_color: 63b3ed
+  font_size: 22
+  font_style: bold
+
+section:
+  font_color: a0aec0
+  font_size: 14
+  font_style: bold
+
+code:
+  background_color: 2d3748
+  border_color: 4a5568
+  border_offset: 3
+  border_radius: 4
+  border_width: 1
+  font_color: 68d391
+  font_family: JetBrains Mono
+
+sidebar:
+  background_color: 2d3748
+  border_color: 4a5568
+  border_radius: 6
+  border_width: 1
+
+table:
+  border_color: 4a5568
+  stripe_background_color: 2d3748
+
+toc:
+  font_color: a0aec0
+  font_size: 9

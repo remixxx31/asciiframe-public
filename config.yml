@@ -1,0 +1,37 @@
+
+entry: docs/index.adoc
+outDir: build_artifacts
+formats: [html, pdf]
+
+# Configuration des thèmes
+theme:
+  # Thèmes HTML: default, dark, minimal, documentation, blog
+  html: dark
+  
+  # Thèmes PDF: default, report, book  
+  pdf: book
+  
+  # CSS custom optionnel (chemin vers fichier .css)
+  # customCssPath: themes/custom-example.css
+
+diagrams:
+  engine: kroki
+  url: http://localhost:8000
+
+watch:
+  enabled: true
+  debounceMs: 250
+  maxConcurrentBuilds: 4
+
+cache:
+  memory: caffeine
+  diagramsDir: .cache/diagrams
+
+security:
+  safeMode: SERVER
+  includePaths: [docs]
+
+server:
+  port: 8080
+  compress: true
+  etag: true

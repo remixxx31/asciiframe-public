@@ -1,0 +1,3 @@
+=== Hello Partial
+
+This content comes from an included partial file.

@@ -1,0 +1,67 @@
+# Thème PDF Book - Style livre moderne
+extends: default
+
+page:
+  background_color: ffffff
+  layout: portrait
+  margin: [1in, 0.8in, 1in, 0.8in]
+  size: A4
+
+base:
+  font_color: 2d3748
+  font_family: Georgia
+  font_size: 11
+  line_height_length: 14
+  line_height: $base_line_height_length / $base_font_size
+
+vertical_rhythm: $base_line_height_length
+
+heading:
+  font_color: 2b6cb0
+  font_family: Helvetica
+  font_style: bold
+  margin_top: $vertical_rhythm * 2
+  margin_bottom: $vertical_rhythm * 1.2
+
+title_page:
+  align: center
+  background_color: 2b6cb0
+  font_color: ffffff
+  font_size: 24
+  margin_top: 3in
+  padding: [0.5in, 0]
+
+chapter:
+  font_color: 2b6cb0
+  font_size: 20
+  font_style: bold
+  page_break_before: always
+
+section:
+  font_color: 4a5568
+  font_size: 13
+  font_style: bold
+
+code:
+  background_color: f7fafc
+  border_color: e2e8f0
+  border_offset: 4
+  border_radius: 6
+  border_width: 1
+  font_color: 805ad5
+  font_family: Monaco
+
+sidebar:
+  background_color: ebf8ff
+  border_color: 3182ce
+  border_radius: 8
+  border_width: 2
+
+table:
+  border_color: cbd5e0
+  stripe_background_color: f7fafc
+
+toc:
+  font_color: 4a5568
+  font_size: 10
+  line_height: 1.4

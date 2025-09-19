@@ -1,0 +1,21 @@
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.simple
+    ports: ["8080:8080"]
+    volumes:
+      - ./docs:/work/docs
+      - ./build_artifacts:/work/build
+      - ./config.yml:/work/config.yml:ro
+      - ./.cache:/work/.cache
+    environment:
+      - CONFIG_PATH=/work/config.yml
+      - WORK_DIR=/work
+    depends_on:
+      - kroki
+
+  kroki:
+    image: yuzutech/kroki
+    ports: ["8000:8000"]
