@@ -362,13 +362,16 @@ generate_initial_docs() {
             -d '{"entry":"docs/index.adoc","formats":["html","pdf"]}' \
             2>/dev/null || true
     else
-        ./start.sh
+        # Start AsciiFrame in background for standalone mode
+        ./asciiframe/asciiframe > /dev/null 2>&1 &
+        ASCIIFRAME_PID=$!
         sleep 3
         curl -X POST http://localhost:8080/render \
             -H "Content-Type: application/json" \
             -d '{"entry":"docs/index.adoc","formats":["html","pdf"]}' \
             2>/dev/null || true
-        ./stop.sh
+        # Stop AsciiFrame
+        kill $ASCIIFRAME_PID 2>/dev/null || true
     fi
 }
 
