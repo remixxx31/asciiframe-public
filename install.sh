@@ -148,25 +148,93 @@ EOF
     # Create default config
     cat > config.yml << 'EOF'
 # AsciiFrame Configuration
+# Documentation: https://github.com/remixxx31/asciiframe-public
+
+# Entry point - your main AsciiDoc file
 entry: docs/index.adoc
+
+# Output directory for generated files
 outDir: build
+
+# Output formats to generate
+# Options: [html], [pdf], [html, pdf]
 formats: [html, pdf]
 
+# Theme configuration
 theme:
+  # HTML themes: documentation, modern, minimal, dark, presentation
   html: documentation
+  # PDF themes: report, book, article, minimal
   pdf: report
 
+# Diagram integration with Kroki
 diagrams:
   engine: kroki
   url: http://kroki:8000
+  # Cache diagrams locally (uncomment to enable)
+  # cache: true
 
+# File watching for live reload
 watch:
+  # Enable/disable live reload
   enabled: true
+  # Delay before rebuilding (milliseconds)
   debounceMs: 500
 
+# Web server configuration  
 server:
+  # Port to serve on
   port: 8080
+  # Enable gzip compression
   compress: true
+  # CORS settings (uncomment if needed)
+  # cors:
+  #   enabled: true
+  #   origins: ["http://localhost:3000"]
+
+# ========================================
+# QUICK THEME SWITCHING
+# ========================================
+# Uncomment to try different themes:
+
+# Modern theme (clean, responsive)
+# theme:
+#   html: modern
+#   pdf: book
+
+# Dark theme (dark background)  
+# theme:
+#   html: dark
+#   pdf: article
+
+# Minimal theme (simple, lightweight)
+# theme:
+#   html: minimal
+#   pdf: minimal
+
+# ========================================
+# ADDING NEW PAGES
+# ========================================
+# 1. Create new .adoc files in docs/ directory
+# 2. Link them in your main index.adoc:
+#    
+#    include::chapter1.adoc[]
+#    include::chapter2.adoc[]
+#
+# 3. Or create a multi-page structure:
+#    docs/
+#    ├── index.adoc          (main page)
+#    ├── getting-started.adoc
+#    └── guides/
+#        └── tutorial.adoc
+#
+# 4. Each page accessible via:
+#    http://localhost:8080/preview/getting-started.html
+#    http://localhost:8080/preview/guides/tutorial.html
+#
+# 5. Cross-reference between pages:
+#    <<getting-started#setup,Setup Guide>>
+#    xref:guides/tutorial.adoc[Tutorial]
 EOF
 
     # Create docs directory with sample
@@ -304,20 +372,94 @@ EOF
     
     # Create config
     cat > config.yml << 'EOF'
+# AsciiFrame Configuration
+# Documentation: https://github.com/remixxx31/asciiframe-public
+
+# Entry point - your main AsciiDoc file
 entry: docs/index.adoc
+
+# Output directory for generated files
 outDir: output
+
+# Output formats to generate
+# Options: [html], [pdf], [html, pdf]
 formats: [html, pdf]
 
+# Theme configuration
 theme:
+  # HTML themes: documentation, modern, minimal, dark, presentation
   html: documentation
+  # PDF themes: report, book, article, minimal
   pdf: report
 
+# File watching for live reload
 watch:
+  # Enable/disable live reload
   enabled: true
+  # Delay before rebuilding (milliseconds)
   debounceMs: 500
 
+# Web server configuration  
 server:
+  # Port to serve on
   port: 8080
+  # Enable gzip compression
+  # compress: true
+  # CORS settings (uncomment if needed)
+  # cors:
+  #   enabled: true
+  #   origins: ["http://localhost:3000"]
+
+# Diagram integration (optional)
+# Requires Kroki service running
+# diagrams:
+#   engine: kroki
+#   url: http://localhost:8000
+#   cache: true
+
+# ========================================
+# QUICK THEME SWITCHING
+# ========================================
+# Uncomment to try different themes:
+
+# Modern theme (clean, responsive)
+# theme:
+#   html: modern
+#   pdf: book
+
+# Dark theme (dark background)  
+# theme:
+#   html: dark
+#   pdf: article
+
+# Minimal theme (simple, lightweight)
+# theme:
+#   html: minimal
+#   pdf: minimal
+
+# ========================================
+# ADDING NEW PAGES
+# ========================================
+# 1. Create new .adoc files in docs/ directory
+# 2. Link them in your main index.adoc:
+#    
+#    include::chapter1.adoc[]
+#    include::chapter2.adoc[]
+#
+# 3. Or create a multi-page structure:
+#    docs/
+#    ├── index.adoc          (main page)
+#    ├── getting-started.adoc
+#    └── guides/
+#        └── tutorial.adoc
+#
+# 4. Each page accessible via:
+#    http://localhost:8080/preview/getting-started.html
+#    http://localhost:8080/preview/guides/tutorial.html
+#
+# 5. Cross-reference between pages:
+#    <<getting-started#setup,Setup Guide>>
+#    xref:guides/tutorial.adoc[Tutorial]
 EOF
 
     # Create docs directory
