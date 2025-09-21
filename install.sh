@@ -16,7 +16,7 @@ ASCIIFRAME_VERSION=${ASCIIFRAME_VERSION:-"latest"}
 INSTALL_DIR=${INSTALL_DIR:-"./asciiframe"}
 DOCKER_COMPOSE=${DOCKER_COMPOSE:-"false"}
 GLOBAL_INSTALL=${GLOBAL_INSTALL:-"false"}
-REPO_URL="https://github.com/asciiframe/asciiframe"
+REPO_URL="https://github.com/remixxx31/asciiframe-public"
 RELEASES_URL="$REPO_URL/releases"
 
 print_header() {
@@ -234,7 +234,7 @@ EOF
 get_latest_version() {
     if [[ "$ASCIIFRAME_VERSION" == "latest" ]]; then
         # Get latest release tag from GitHub API
-        ASCIIFRAME_VERSION=$(curl -s "https://api.github.com/repos/asciiframe/asciiframe/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        ASCIIFRAME_VERSION=$(curl -s "https://api.github.com/repos/remixxx31/asciiframe-public/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ -z "$ASCIIFRAME_VERSION" ]]; then
             print_error "Failed to get latest version"
             exit 1
@@ -485,7 +485,7 @@ case "${1:-}" in
     --help|-h)
         echo "AsciiFrame Professional Installer"
         echo ""
-        echo "Usage: curl -sSL https://get.asciiframe.io | bash -s -- [options]"
+        echo "Usage: curl -sSL https://raw.githubusercontent.com/remixxx31/asciiframe-public/main/install.sh | bash -s -- [options]"
         echo ""
         echo "Options:"
         echo "  --docker      Force Docker installation"
@@ -501,9 +501,9 @@ case "${1:-}" in
         echo "  GLOBAL_INSTALL       Install globally (true/false)"
         echo ""
         echo "Examples:"
-        echo "  curl -sSL https://get.asciiframe.io | bash"
-        echo "  curl -sSL https://get.asciiframe.io | bash -s -- --docker"
-        echo "  curl -sSL https://get.asciiframe.io | INSTALL_DIR=/opt/asciiframe bash"
+        echo "  curl -sSL https://raw.githubusercontent.com/remixxx31/asciiframe-public/main/install.sh | bash"
+        echo "  curl -sSL https://raw.githubusercontent.com/remixxx31/asciiframe-public/main/install.sh | bash -s -- --docker"
+        echo "  curl -sSL https://raw.githubusercontent.com/remixxx31/asciiframe-public/main/install.sh | INSTALL_DIR=/opt/asciiframe bash"
         ;;
     *)
         main "$@"

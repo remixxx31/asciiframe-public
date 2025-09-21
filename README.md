@@ -18,7 +18,7 @@ A fast, zero-configuration AsciiDoc renderer with beautiful themes and live prev
 
 ```bash
 # Install anywhere - detects Java/Docker automatically
-curl -sSL https://get.asciiframe.io | bash
+curl -sSL https://raw.githubusercontent.com/remixxx31/asciiframe-public/main/install.sh | bash
 
 # Then use
 asciiframe           # Starts server
@@ -32,7 +32,7 @@ asciiframe           # Starts server
 docker run -p 8080:8080 \
   -v $PWD/docs:/work/docs \
   -v $PWD/build:/work/build \
-  ghcr.io/remixxx31/asciiframework:latest
+  ghcr.io/remiperray/asciiframe-public:latest
 ```
 
 ### Option 3: Docker Compose
@@ -41,7 +41,7 @@ docker run -p 8080:8080 \
 # Add to docker-compose.yml
 services:
   asciiframe:
-    image: ghcr.io/remixxx31/asciiframework:latest
+    image: ghcr.io/remiperray/asciiframe-public:latest
     ports: ["8080:8080"]
     volumes:
       - ./docs:/work/docs
@@ -55,7 +55,7 @@ docker compose up -d
 
 ```bash
 # If you have Java 23+
-curl -LO https://github.com/remixxx31/asciiframework/releases/latest/download/asciiframe.jar
+curl -LO https://github.com/remiperray/asciiframe-public/releases/latest/download/asciiframe.jar
 java -jar asciiframe.jar
 ```
 
