@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Read(//private/tmp/**)",
+      "Bash(bash:*)",
+      "Read(//Users/remiperray/Documents/Projects/test-lib/**)",
+      "Bash(cat:*)",
+      "Bash(./asciiframe/asciiframe:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(git add:*)",
+      "Bash(./gradlew:*)",
+      "Bash(chmod:*)",
+      "Bash(docker:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

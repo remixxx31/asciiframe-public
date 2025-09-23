@@ -1,0 +1,322 @@
+# AsciiFrame - Exemple de thème PDF personnalisé
+#
+# Ce fichier montre comment créer un thème PDF personnalisé pour AsciiFrame.
+# Copiez ce fichier et modifiez les styles selon vos besoins.
+#
+# Pour utiliser ce thème, ajoutez dans votre config.yml :
+# theme:
+#   customPdfThemePath: themes/pdf/votre-theme.yml
+#
+# Documentation complète : https://docs.asciidoctor.org/pdf-converter/latest/theme/
+
+# === CONFIGURATION DE LA PAGE ===
+page:
+  # Format de page (A4, US Letter, etc.)
+  layout: portrait
+  margin: [2cm, 2cm, 2cm, 2cm]  # top, right, bottom, left
+  # Taille personnalisée : 
+  # size: [21cm, 29.7cm]  # Largeur x Hauteur pour A4
+  
+  # Couleur de fond de la page
+  background-color: ffffff
+
+# === POLICES ===
+font:
+  # Répertoire des polices (optionnel)
+  # catalog:
+  #   fonts/
+  
+  # Définition des polices utilisées
+  fallbacks:
+    - NotoSerif
+    - M+ 1mn
+  
+  # Police par défaut pour le texte
+  default:
+    normal: fonts/NotoSerif-Regular.ttf
+    italic: fonts/NotoSerif-Italic.ttf
+    bold: fonts/NotoSerif-Bold.ttf
+    bold_italic: fonts/NotoSerif-BoldItalic.ttf
+  
+  # Police pour les titres
+  heading:
+    normal: fonts/NotoSans-Regular.ttf
+    bold: fonts/NotoSans-Bold.ttf
+  
+  # Police pour le code
+  code:
+    normal: fonts/mplus1mn-regular-ascii-conums.ttf
+    bold: fonts/mplus1mn-bold-ascii.ttf
+    italic: fonts/mplus1mn-regular-ascii-conums.ttf
+    bold_italic: fonts/mplus1mn-bold-ascii.ttf
+
+# === COULEURS DE BASE ===
+base:
+  # Couleur du texte principal
+  font-color: 333333
+  
+  # Couleur des liens
+  link-color: 3498db
+  
+  # Interligne
+  line-height: 1.6
+  
+  # Taille de police de base
+  font-size: 11pt
+
+# === TITRES ===
+heading:
+  # Couleur des titres
+  font-color: 2c3e50
+  
+  # Police des titres (référence à la définition dans font)
+  font-family: heading
+  font-style: bold
+  
+  # Espacement avant et après les titres
+  margin-top: 20pt
+  margin-bottom: 10pt
+
+# Styles spécifiques par niveau de titre
+h1:
+  font-size: 24pt
+  font-color: 2c3e50
+  margin-top: 0
+  margin-bottom: 20pt
+  border-bottom-width: 2pt
+  border-bottom-color: 3498db
+
+h2:
+  font-size: 18pt
+  font-color: 2c3e50
+  margin-top: 20pt
+  margin-bottom: 15pt
+  border-bottom-width: 1pt
+  border-bottom-color: bdc3c7
+
+h3:
+  font-size: 14pt
+  font-color: 2c3e50
+  margin-top: 16pt
+  margin-bottom: 8pt
+
+h4:
+  font-size: 12pt
+  font-color: 34495e
+  margin-top: 14pt
+  margin-bottom: 6pt
+
+# === PARAGRAPHES ===
+paragraph:
+  margin-bottom: 12pt
+  text-align: justify
+
+# === LISTES ===
+list:
+  indent: 20pt
+  item-spacing: 6pt
+
+# === CODE INLINE ===
+code:
+  font-family: code
+  font-size: 10pt
+  background-color: f8f9fa
+  border-color: e9ecef
+  border-radius: 3pt
+  border-width: 0.5pt
+
+# === BLOCS DE CODE ===
+code_block:
+  background-color: 263238
+  font-color: eeffff
+  font-family: code
+  font-size: 9pt
+  padding: [12pt, 15pt, 12pt, 15pt]
+  border-radius: 5pt
+
+# === CITATIONS ===
+blockquote:
+  background-color: f8f9fa
+  border-left-width: 4pt
+  border-left-color: 3498db
+  padding: [12pt, 15pt, 12pt, 20pt]
+  font-style: italic
+  font-color: 555555
+
+# === TABLEAUX ===
+table:
+  border-color: dddddd
+  border-width: 0.5pt
+  
+  # En-têtes de tableau
+  head:
+    background-color: 3498db
+    font-color: ffffff
+    font-style: bold
+    border-bottom-width: 1pt
+    border-bottom-color: 2980b9
+  
+  # Cellules du corps du tableau
+  body:
+    stripe-background-color: f8f9fa
+  
+  # Espacement dans les cellules
+  cell:
+    padding: [6pt, 8pt, 6pt, 8pt]
+
+# === IMAGES ===
+image:
+  # Alignement par défaut des images
+  alignment: center
+
+# === PAGE DE TITRE ===
+title_page:
+  # Couleur de fond de la page de titre
+  background-color: ffffff
+  
+  # Alignement du titre
+  alignment: center
+  
+  # Style du titre principal
+  title:
+    font-size: 36pt
+    font-color: 2c3e50
+    font-style: bold
+    margin-bottom: 20pt
+  
+  # Style du sous-titre/auteur
+  subtitle:
+    font-size: 18pt
+    font-color: 7f8c8d
+    margin-bottom: 40pt
+  
+  # Style des métadonnées (auteur, date, etc.)
+  authors:
+    font-size: 14pt
+    font-color: 95a5a6
+    margin-bottom: 20pt
+
+# === TABLE DES MATIÈRES ===
+toc:
+  # Titre de la table des matières
+  title:
+    font-size: 18pt
+    font-color: 2c3e50
+    font-style: bold
+  
+  # Indentation par niveau
+  indent: 20pt
+  
+  # Espacement entre les entrées
+  line-height: 1.4
+  
+  # Style des liens dans la TOC
+  font-color: 3498db
+
+# === EN-TÊTES ET PIEDS DE PAGE ===
+header:
+  height: 20pt
+  border-bottom-width: 0.5pt
+  border-bottom-color: cccccc
+  padding-bottom: 6pt
+  
+  # Contenu de l'en-tête (gauche, centre, droite)
+  left:
+    content: '{document-title}'
+  right:
+    content: 'Page {page-number}'
+
+# === PIEDS DE PAGE - CONFIGURATION AVANCÉE ===
+footer:
+  # Hauteur du pied de page
+  height: 25pt
+  
+  # Style visuel
+  border-top-width: 1pt
+  border-top-color: 3498db
+  padding-top: 8pt
+  
+  # Police et taille pour le footer
+  font-family: heading
+  font-size: 9pt
+  font-color: 666666
+  
+  # Contenu du pied de page (AsciiFrame remplacera par la configuration)
+  # Ces valeurs seront remplacées par les attributs PDF définis dans la config
+  center:
+    content: '{page-number} / {page-count}'
+  
+  # Exemples de contenu possible :
+  # left:
+  #   content: '© 2024 Mon Entreprise'
+  # center:
+  #   content: 'Page {page-number} sur {page-count}'
+  # right:
+  #   content: 'Généré le {localdate}'
+  
+  # Variables disponibles pour les pieds de page PDF :
+  # {page-number} - Numéro de page actuel
+  # {page-count} - Nombre total de pages
+  # {document-title} - Titre du document
+  # {document-subtitle} - Sous-titre du document
+  # {author} - Auteur du document
+  # {localdate} - Date locale (format JJ/MM/AAAA)
+  # {localtime} - Heure locale (format HH:MM)
+  # {localdatetime} - Date et heure locales
+
+# === NOTES ET ALERTES ===
+admonition:
+  # Style de base pour tous les admonitions
+  padding: [12pt, 15pt, 12pt, 15pt]
+  border-left-width: 4pt
+  border-radius: 5pt
+  margin-bottom: 12pt
+  
+  # Couleur de l'icône
+  icon:
+    size: 14pt
+  
+  # Styles spécifiques par type
+  note:
+    background-color: e3f2fd
+    border-left-color: 3498db
+    icon:
+      name: fa-info-circle
+      color: 3498db
+  
+  tip:
+    background-color: e8f5e8
+    border-left-color: 27ae60
+    icon:
+      name: fa-lightbulb-o
+      color: 27ae60
+  
+  warning:
+    background-color: fff3cd
+    border-left-color: f39c12
+    icon:
+      name: fa-warning
+      color: f39c12
+  
+  caution:
+    background-color: f8d7da
+    border-left-color: e74c3c
+    icon:
+      name: fa-fire
+      color: e74c3c
+
+# === AUTRES ÉLÉMENTS ===
+# Lignes horizontales
+thematic_break:
+  border-width: 0.5pt
+  border-color: cccccc
+  margin-top: 20pt
+  margin-bottom: 20pt
+
+# Espacement des sections
+section:
+  margin-bottom: 20pt
+
+# Style des index et glossaires
+index:
+  column-gap: 20pt

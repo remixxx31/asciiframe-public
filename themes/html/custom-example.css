@@ -1,0 +1,340 @@
+/* 
+ * AsciiFrame - Exemple de thème CSS personnalisé
+ * 
+ * Ce fichier montre comment créer un thème HTML personnalisé pour AsciiFrame.
+ * Copiez ce fichier et modifiez les styles selon vos besoins.
+ * 
+ * Pour utiliser ce thème, ajoutez dans votre config.yml :
+ * theme:
+ *   customCssPath: themes/html/votre-theme.css
+ */
+
+<style>
+/* === CONFIGURATION GÉNÉRALE === */
+body { 
+    /* Police principale - utilisez des polices system pour une compatibilité maximale */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    
+    /* Largeur et centrage du contenu */
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    
+    /* Typographie de base */
+    line-height: 1.6;
+    color: #333;
+    
+    /* Couleur de fond */
+    background-color: #ffffff;
+}
+
+/* === TITRES === */
+h1, h2, h3, h4, h5, h6 {
+    /* Couleur des titres */
+    color: #2c3e50;
+    
+    /* Espacement */
+    margin-top: 2em;
+    margin-bottom: 1em;
+    
+    /* Police des titres (optionnel) */
+    font-weight: 600;
+}
+
+h1 {
+    /* Style spécial pour le titre principal */
+    font-size: 2.5em;
+    border-bottom: 3px solid #3498db;
+    padding-bottom: 10px;
+}
+
+h2 {
+    /* Style pour les sous-titres */
+    font-size: 2em;
+    border-bottom: 1px solid #bdc3c7;
+    padding-bottom: 5px;
+}
+
+/* === TABLE DES MATIÈRES === */
+.toc {
+    /* Style du bloc table des matières */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    
+    /* Ombre pour donner de la profondeur */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.toc a {
+    /* Liens dans la table des matières */
+    color: white;
+    text-decoration: none;
+    
+    /* Animation au survol */
+    transition: opacity 0.3s ease;
+}
+
+.toc a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+/* === CODE INLINE === */
+code {
+    /* Style pour le code inline (dans les paragraphes) */
+    background-color: #f8f9fa;
+    color: #e74c3c;
+    padding: 2px 6px;
+    border-radius: 4px;
+    
+    /* Police monospace */
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+}
+
+/* === BLOCS DE CODE === */
+.listingblock {
+    /* Style pour les blocs de code */
+    background-color: #263238;
+    color: #eeffff;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    
+    /* Ombre */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    /* Espacement */
+    margin: 20px 0;
+}
+
+.listingblock code {
+    /* Code dans les blocs - override du style inline */
+    background: transparent;
+    color: inherit;
+    padding: 0;
+}
+
+/* === CITATIONS === */
+blockquote {
+    /* Style des citations */
+    border-left: 4px solid #3498db;
+    padding-left: 20px;
+    margin: 20px 0;
+    font-style: italic;
+    color: #555;
+    background-color: #f8f9fa;
+    padding: 15px 20px;
+    border-radius: 0 8px 8px 0;
+}
+
+/* === TABLEAUX === */
+table {
+    /* Style des tableaux */
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: white;
+    
+    /* Ombre subtile */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    /* Cellules de tableau */
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    /* En-têtes de tableau */
+    background-color: #3498db;
+    color: white;
+    font-weight: 600;
+}
+
+tr:nth-child(even) {
+    /* Alternance de couleurs pour les lignes */
+    background-color: #f8f9fa;
+}
+
+/* === LIENS === */
+a {
+    /* Style des liens */
+    color: #3498db;
+    text-decoration: none;
+    
+    /* Animation au survol */
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
+/* === IMAGES === */
+img {
+    /* Images responsives */
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    
+    /* Ombre pour les images */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* === LISTES === */
+ul, ol {
+    /* Espacement des listes */
+    margin: 16px 0;
+    padding-left: 30px;
+}
+
+li {
+    /* Espacement entre les éléments de liste */
+    margin: 8px 0;
+}
+
+/* === NOTES ET ALERTES === */
+.admonitionblock {
+    /* Blocs d'avertissement/notes */
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+    background-color: #f8f9fa;
+}
+
+.admonitionblock.note {
+    border-left-color: #3498db;
+    background-color: #e3f2fd;
+}
+
+.admonitionblock.tip {
+    border-left-color: #27ae60;
+    background-color: #e8f5e8;
+}
+
+.admonitionblock.warning {
+    border-left-color: #f39c12;
+    background-color: #fff3cd;
+}
+
+.admonitionblock.caution {
+    border-left-color: #e74c3c;
+    background-color: #f8d7da;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+    body {
+        /* Adaptation mobile */
+        padding: 10px;
+        font-size: 16px;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+    
+    h2 {
+        font-size: 1.5em;
+    }
+    
+    .toc {
+        padding: 15px;
+    }
+    
+    .listingblock {
+        padding: 15px;
+    }
+}
+
+/* === PIEDS DE PAGE === */
+.asciiframe-footer {
+    /* Styles de base pour les pieds de page AsciiFrame */
+    margin-top: 40px;
+    padding: 20px 0;
+    border-top: 2px solid #e1e8ed;
+    font-size: 0.9em;
+    color: #657786;
+    
+    /* Animation d'apparition */
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.asciiframe-footer:hover {
+    opacity: 1;
+}
+
+/* Style pour les pieds de page fixes */
+.asciiframe-footer[style*="position: fixed"] {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid #e1e8ed;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Adaptation pour le thème sombre (si utilisé) */
+@media (prefers-color-scheme: dark) {
+    .asciiframe-footer {
+        border-top-color: #38444d;
+        color: #8899a6;
+    }
+    
+    .asciiframe-footer[style*="position: fixed"] {
+        background-color: rgba(21, 32, 43, 0.95);
+        border-top-color: #38444d;
+    }
+}
+
+/* === IMPRESSION === */
+@media print {
+    body {
+        /* Styles pour l'impression */
+        max-width: none;
+        margin: 0;
+        color: black;
+        background: white;
+        
+        /* Espace pour le footer en impression */
+        margin-bottom: 40px;
+    }
+    
+    .toc {
+        background: white;
+        color: black;
+        border: 1px solid #ccc;
+    }
+    
+    .listingblock {
+        background: white;
+        color: black;
+        border: 1px solid #ccc;
+    }
+    
+    /* Footer en impression */
+    .asciiframe-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid #ccc;
+        color: black;
+        font-size: 10pt;
+        page-break-inside: avoid;
+    }
+    
+    /* Éviter les coupures de page dans les blocs */
+    .listingblock, blockquote, .admonitionblock {
+        page-break-inside: avoid;
+    }
+}
+</style>

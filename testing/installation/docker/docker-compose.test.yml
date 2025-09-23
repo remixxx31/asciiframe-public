@@ -1,0 +1,58 @@
+# Docker Compose configuration for running installation tests
+# Usage: docker-compose -f docker-compose.test.yml up
+
+version: '3.8'
+
+services:
+  # Ubuntu test environment
+  test-ubuntu:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.ubuntu
+    container_name: asciiframe-test-ubuntu
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../scripts:/home/testuser/scripts:ro
+      - ../fixtures:/home/testuser/fixtures:ro
+      - test-results-ubuntu:/home/testuser/results
+    environment:
+      - SKIP_CLEANUP=true
+      - INSTALL_MODES=standalone docker
+    privileged: true
+    
+  # Alpine test environment  
+  test-alpine:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.alpine
+    container_name: asciiframe-test-alpine
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../scripts:/home/testuser/scripts:ro
+      - ../fixtures:/home/testuser/fixtures:ro
+      - test-results-alpine:/home/testuser/results
+    environment:
+      - SKIP_CLEANUP=true
+      - INSTALL_MODES=standalone docker
+    privileged: true
+    
+  # CentOS test environment
+  test-centos:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.centos
+    container_name: asciiframe-test-centos
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../scripts:/home/testuser/scripts:ro
+      - ../fixtures:/home/testuser/fixtures:ro
+      - test-results-centos:/home/testuser/results
+    environment:
+      - SKIP_CLEANUP=true
+      - INSTALL_MODES=standalone docker
+    privileged: true
+
+volumes:
+  test-results-ubuntu:
+  test-results-alpine:
+  test-results-centos:

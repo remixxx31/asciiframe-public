@@ -1,5 +1,5 @@
 # Simple runtime Dockerfile with pre-built JAR
-FROM eclipse-temurin:23-jre-alpine
+FROM eclipse-temurin:24-jre-alpine
 
 LABEL maintainer="AsciiFrame Team"
 LABEL org.opencontainers.image.title="AsciiFrame"
@@ -29,8 +29,8 @@ COPY config.yml config.yml.template
 RUN mkdir -p /work/docs /work/build /work/.cache && \
     chown -R asciiframe:asciiframe /app /work
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+# Health check with longer start period for AsciidoctorJ initialization
+HEALTHCHECK --interval=60s --timeout=15s --start-period=60s --retries=2 \
     CMD curl -f http://localhost:8080/health || exit 1
 
 # Switch to non-root user

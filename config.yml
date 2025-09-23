@@ -5,14 +5,53 @@ formats: [html, pdf]
 
 # Configuration des thèmes
 theme:
-  # Thèmes HTML: default, dark, minimal, documentation, blog
+  # Thèmes HTML prédéfinis: default, dark, minimal, documentation, blog
   html: dark
   
-  # Thèmes PDF: default, report, book  
+  # Thèmes PDF prédéfinis: default, report, book  
   pdf: book
   
-  # CSS custom optionnel (chemin vers fichier .css)
-  # customCssPath: themes/custom-example.css
+  # === THÈMES PERSONNALISÉS ===
+  
+  # CSS personnalisé pour HTML (prioritaire sur le thème prédéfini)
+  # Copiez themes/html/custom-example.css et modifiez selon vos besoins
+  # customCssPath: themes/html/mon-theme.css
+  
+  # Thème PDF personnalisé (prioritaire sur le thème prédéfini)  
+  # Copiez themes/pdf/custom-example.yml et modifiez selon vos besoins
+  # customPdfThemePath: themes/pdf/mon-theme.yml
+  
+  # === CONFIGURATION DES PIEDS DE PAGE ===
+  
+  # Configuration des pieds de page pour HTML et PDF
+  footer:
+    # Texte du pied de page pour HTML (supporte HTML et variables comme {date}, {time})
+    # htmlText: "© 2024 Mon Entreprise - Généré le {date} à {time}"
+    
+    # Texte du pied de page pour PDF (supporte les variables AsciiDoc)
+    # pdfText: "© 2024 Mon Entreprise - Page {page-number} sur {page-count}"
+    
+    # Position du pied de page HTML: bottom (défaut), fixed-bottom
+    # htmlPosition: bottom
+    
+    # Position du pied de page PDF: footer (défaut), bottom
+    # pdfPosition: footer
+    
+    # Alignement HTML: left, center (défaut), right
+    # htmlAlignment: center
+    
+    # Alignement PDF: left, center (défaut), right  
+    # pdfAlignment: center
+    
+    # Style CSS personnalisé pour le pied de page HTML
+    # htmlStyle: "color: #666; font-size: 12px; border-top: 1px solid #ddd; padding-top: 10px;"
+    
+    # Style personnalisé pour le pied de page PDF (syntaxe theme PDF)
+    # pdfStyle: "font-size: 10pt; color: #666666"
+  
+  # Exemples d'utilisation :
+  # customCssPath: themes/html/custom-example.css
+  # customPdfThemePath: themes/pdf/custom-example.yml
 
 diagrams:
   engine: kroki

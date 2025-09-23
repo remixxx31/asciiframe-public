@@ -1,0 +1,30 @@
+# Test environment: Alpine Linux minimal
+FROM alpine:3.18
+
+# Install system dependencies for testing
+RUN apk add --no-cache \
+    curl \
+    wget \
+    git \
+    unzip \
+    bash \
+    openjdk21-jre \
+    docker \
+    docker-cli-compose
+
+# Create test user (non-root)
+RUN adduser -D -s /bin/bash testuser
+USER testuser
+WORKDIR /home/testuser
+
+# Copy test scripts
+COPY --chown=testuser:testuser scripts/ ./scripts/
+COPY --chown=testuser:testuser fixtures/ ./fixtures/
+
+# Set executable permissions
+USER root
+RUN chmod +x ./scripts/*.sh
+USER testuser
+
+# Default command runs installation tests
+CMD ["./scripts/test-installation.sh"]

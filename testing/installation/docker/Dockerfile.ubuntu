@@ -1,0 +1,30 @@
+# Test environment: Ubuntu clean install
+FROM ubuntu:22.04
+
+# Install system dependencies for testing
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    unzip \
+    default-jdk \
+    docker.io \
+    docker-compose \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create test user (non-root)
+RUN useradd -m -s /bin/bash testuser
+USER testuser
+WORKDIR /home/testuser
+
+# Copy test scripts
+COPY --chown=testuser:testuser scripts/ ./scripts/
+COPY --chown=testuser:testuser fixtures/ ./fixtures/
+
+# Set executable permissions
+USER root
+RUN chmod +x ./scripts/*.sh
+USER testuser
+
+# Default command runs installation tests
+CMD ["./scripts/test-installation.sh"]

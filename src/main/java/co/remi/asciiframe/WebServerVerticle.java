@@ -35,6 +35,17 @@ public class WebServerVerticle extends AbstractVerticle {
             JsonObject body = ctx.body().asJsonObject();
             String entry = body.getString("entry", cfg.entry());
             var formats = body.getJsonArray("formats");
+            
+            // Validate entry file exists
+            java.nio.file.Path entryPath = java.nio.file.Paths.get(entry);
+            if (!java.nio.file.Files.exists(entryPath)) {
+                ctx.response().setStatusCode(404).end(new JsonObject()
+                    .put("error", "File not found: " + entry)
+                    .put("path", entryPath.toAbsolutePath().toString())
+                    .encode());
+                return;
+            }
+            
             JsonObject res = new JsonObject();
             // rendering is blocking, keep executeBlocking for render calls
             vertx.executeBlocking(promise2 -> {
@@ -43,13 +54,23 @@ public class WebServerVerticle extends AbstractVerticle {
                     res.put("htmlPath", rr.htmlPath);
                     res.put("pdfPath", rr.pdfPath);
                     res.put("cacheHit", rr.cacheHit);
+                    res.put("success", true);
                     promise2.complete();
                 } catch (Exception e) {
+                    System.err.println("Render error for " + entry + ": " + e.getMessage());
+                    e.printStackTrace();
                     promise2.fail(e);
                 }
             }, ar2 -> {
                 if (ar2.failed()) {
-                    ctx.response().setStatusCode(500).end(new JsonObject().put("error", ar2.cause().getMessage()).encode());
+                    String errorMsg = ar2.cause().getMessage();
+                    String errorClass = ar2.cause().getClass().getSimpleName();
+                    System.err.println("Render failed: " + errorClass + " - " + errorMsg);
+                    ctx.response().setStatusCode(500).end(new JsonObject()
+                        .put("error", errorMsg != null ? errorMsg : "Unknown render error")
+                        .put("errorType", errorClass)
+                        .put("entry", entry)
+                        .encode());
                 } else {
                     ctx.response().putHeader("Content-Type", "application/json").end(res.encode());
                     broadcast("build:done");
@@ -57,7 +78,17 @@ public class WebServerVerticle extends AbstractVerticle {
             });
         });
 
-        router.get("/preview/*").handler(StaticHandler.create().setCachingEnabled(true).setWebRoot(cfg.outDir()));
+        // Serve generated files from output directory
+        router.get("/preview/*").handler(StaticHandler.create()
+            .setCachingEnabled(true)
+            .setWebRoot(cfg.outDir())
+            .setIndexPage("index.html"));
+            
+        // Also serve files directly from output directory
+        router.get("/build/*").handler(StaticHandler.create()
+            .setCachingEnabled(true) 
+            .setWebRoot(cfg.outDir()));
+            
         router.get("/health").handler(ctx -> ctx.end("ok"));
 
         vertx.createHttpServer(new HttpServerOptions().setCompressionSupported(true))
