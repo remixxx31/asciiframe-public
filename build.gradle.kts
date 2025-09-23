@@ -119,3 +119,7 @@ tasks.shadowJar {
     archiveFileName.set("app-fat.jar")
     mergeServiceFiles()
 }
+
+tasks.test {
+    useJUnitPlatform()
+}
