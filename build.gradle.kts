@@ -11,7 +11,7 @@ repositories {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(23))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -28,6 +28,12 @@ dependencies {
     implementation("org.yaml:snakeyaml:2.2")
 
     implementation("org.slf4j:slf4j-simple:2.0.12")
+
+    // Test dependencies
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testImplementation("org.mockito:mockito-core:5.8.0")
+    testImplementation("io.vertx:vertx-junit5:4.5.9")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 application {
@@ -41,4 +47,8 @@ tasks.withType<JavaCompile> {
 tasks.shadowJar {
     archiveFileName.set("app-fat.jar")
     mergeServiceFiles()
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
