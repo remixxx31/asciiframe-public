@@ -24,11 +24,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
-    - name: Setup JDK 23 (Temurin)
+    - name: Setup JDK 24 (Temurin)
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: '23'
+        java-version: '24'
         cache: 'gradle'
         
     - name: Verify java
