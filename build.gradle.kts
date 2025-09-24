@@ -58,7 +58,7 @@ tasks.test {
         if (includeTags == null) {
             excludeTags("integration", "installation", "docker")
         } else {
-            includeTags(includeTags.split(","))
+            includeTags(*includeTags.split(",").toTypedArray())
         }
     }
     testLogging {
