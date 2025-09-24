@@ -130,23 +130,18 @@ test_prerequisites() {
 }
 
 download_install_script() {
-    print_info "Downloading install script..."
+    print_info "Setting up test install script..."
     
-    # For testing, we'll use the local install script
-    if [[ -f "../../install.sh" ]]; then
-        cp ../../install.sh ./install.sh
-        print_success "Using local install script"
+    # Use the modified test install script that works with local JARs
+    local test_script="$(dirname "$0")/test-install.sh"
+    if [[ -f "$test_script" ]]; then
+        cp "$test_script" ./install.sh
+        chmod +x install.sh
+        print_success "Using test install script with local JAR support"
     else
-        # Fallback to downloading from GitHub
-        if curl -fsSL "https://raw.githubusercontent.com/remixxx31/asciiframe-public/main/install.sh" -o install.sh; then
-            print_success "Downloaded install script from GitHub"
-        else
-            print_error "Failed to download install script"
-            return 1
-        fi
+        print_error "Test install script not found at: $test_script"
+        return 1
     fi
-    
-    chmod +x install.sh
 }
 
 test_standalone_installation() {
