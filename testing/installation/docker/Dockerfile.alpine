@@ -8,7 +8,7 @@ RUN apk add --no-cache \
     git \
     unzip \
     bash \
-    openjdk21-jdk \
+    openjdk17-jre \
     docker \
     docker-compose
 
