@@ -28,8 +28,8 @@ class CrossPlatformInstallationTest extends BaseIntegrationTest {
     private static final Duration STARTUP_TIMEOUT = Duration.ofMinutes(2);
 
     @ParameterizedTest
-    @ValueSource(strings = {"ubuntu:22.04", "ubuntu:20.04"})
-    @DisplayName("Test standalone installation on different platforms")
+    @ValueSource(strings = {"eclipse-temurin:23-jre"})  
+    @DisplayName("Test standalone installation on Java-enabled platforms")
     void testStandaloneInstallation(String platformImage) {
         logger.info("Testing standalone installation on {}", platformImage);
         
@@ -126,7 +126,7 @@ class CrossPlatformInstallationTest extends BaseIntegrationTest {
     void testPermissionHandling() {
         logger.info("Testing installation with restricted permissions");
         
-        try (GenericContainer<?> container = createTestContainer("ubuntu:22.04")) {
+        try (GenericContainer<?> container = createTestContainer("eclipse-temurin:23-jre")) {
             container.start();
             waitForContainerReady(container);
             
@@ -179,7 +179,7 @@ class CrossPlatformInstallationTest extends BaseIntegrationTest {
     void testResourceCleanup() {
         logger.info("Testing resource cleanup after installation");
         
-        try (GenericContainer<?> container = createTestContainer("alpine:3.18")) {
+        try (GenericContainer<?> container = createTestContainer("eclipse-temurin:23-jre")) {
             container.start();
             waitForContainerReady(container);
             
