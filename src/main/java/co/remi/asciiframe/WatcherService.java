@@ -21,37 +21,44 @@ public class WatcherService {
         if (started) return;
         started = true;
         
+        // Create docs directory synchronously first
+        ensureDocsDirectoryExists();
+        
         // Only start file watching if enabled in config
         if (cfg.watchEnabled()) {
             exec.submit(this::loop);
         }
     }
-
-    private void loop() {
-        try (WatchService ws = FileSystems.getDefault().newWatchService()) {
-            // Use configured path instead of hardcoded "docs"
+    
+    private void ensureDocsDirectoryExists() {
+        try {
             String docsPath = cfg.includePaths().isEmpty() ? "docs" : cfg.includePaths().get(0);
             Path p = Paths.get(docsPath).toAbsolutePath().normalize();
             
-            // Create the docs directory if it doesn't exist to avoid NoSuchFileException
             if (!Files.exists(p)) {
-                try {
-                    Files.createDirectories(p);
-                    System.out.println("ℹ️ Created missing docs directory at runtime: " + p);
-                } catch (Exception e) {
-                    System.err.println("❌ Failed to create docs directory: " + e.getMessage());
-                    // Don't continue if we can't create the directory - the registration will fail
-                    return;
-                }
+                Files.createDirectories(p);
+                System.out.println("ℹ️ Created docs directory: " + p);
             }
+        } catch (Exception e) {
+            System.err.println("❌ Failed to create docs directory: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void loop() {
+        try (WatchService ws = FileSystems.getDefault().newWatchService()) {
+            String docsPath = cfg.includePaths().isEmpty() ? "docs" : cfg.includePaths().get(0);
+            Path p = Paths.get(docsPath).toAbsolutePath().normalize();
             
-            // Ensure it's actually a directory
-            if (!Files.isDirectory(p)) {
-                System.err.println("❌ Path is not a directory: " + p);
+            // Verify the directory exists (should have been created in start())
+            if (!Files.exists(p) || !Files.isDirectory(p)) {
+                System.err.println("❌ Directory does not exist or is not a directory: " + p);
                 return;
             }
             
+            System.out.println("ℹ️ Registering file watcher for: " + p);
             p.register(ws, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
+            System.out.println("ℹ️ File watcher registered successfully");
             
             while (true) {
                 WatchKey key = ws.take();
