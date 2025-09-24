@@ -9,7 +9,7 @@ LABEL org.opencontainers.image.description="Zero-config AsciiDoc renderer with b
 RUN addgroup -g 1001 -S asciiframe && \
     adduser -u 1001 -S asciiframe -G asciiframe
 
-WORKDIR /app
+WORKDIR /work
 
 # Install runtime dependencies
 RUN apk add --no-cache \
@@ -20,14 +20,14 @@ RUN apk add --no-cache \
     haveged \
     && rm -rf /var/cache/apk/*
 
-# Copy pre-built JAR
-COPY build/libs/app-fat.jar app.jar
-COPY themes/ themes/
-COPY config.yml config.yml.template
+# Copy pre-built JAR and files to /work
+COPY build/libs/app-fat.jar /work/app.jar
+COPY themes/ /work/themes/
+COPY config.yml /work/config.yml.template
 
-# Create necessary directories
+# Create necessary directories  
 RUN mkdir -p /work/docs /work/build /work/.cache && \
-    chown -R asciiframe:asciiframe /app /work
+    chown -R asciiframe:asciiframe /work
 
 # Health check with longer start period for AsciidoctorJ initialization
 HEALTHCHECK --interval=60s --timeout=15s --start-period=60s --retries=2 \
@@ -52,9 +52,9 @@ haveged -F & \
 echo 'Starting AsciiFrame...' && \
 if [ ! -f $CONFIG_PATH ]; then \
   echo 'Using default configuration' && \
-  export CONFIG_PATH=/app/config.yml.template; \
+  export CONFIG_PATH=/work/config.yml.template; \
 fi && \
 echo 'Config: '$CONFIG_PATH && \
 echo 'Working directory: '$WORK_DIR && \
-exec java $JAVA_OPTS -jar /app/app.jar\
+exec java $JAVA_OPTS -jar /work/app.jar\
 "]
