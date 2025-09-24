@@ -28,12 +28,9 @@ public class WatcherService {
         
         // Only start file watching if enabled in config
         if (cfg.watchEnabled()) {
-            if (IS_CI) {
-                System.out.println("ℹ️ CI environment detected, using polling fallback for file watching");
-                exec.submit(this::pollingLoop);
-            } else {
-                exec.submit(this::loop);
-            }
+            // Temporarily use polling for all environments to test reliability
+            System.out.println("ℹ️ Using polling-based file watching for reliability");
+            exec.submit(this::pollingLoop);
         }
     }
     
