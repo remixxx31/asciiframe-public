@@ -54,7 +54,7 @@ docker compose up -d --build
 # --- Attente /health -----------------------------------------------------------
 log "Attente de /health (timeout=${TIMEOUT}s)…"
 deadline=$(( $(date +%s) + TIMEOUT ))
-until curl -sfS http://localhost:8080/health >/dev/null 2>&1; do
+until curl -sfS http://localhost:8082/health >/dev/null 2>&1; do
   if [ $(date +%s) -ge $deadline ]; then
     log "Logs du service web (pour debug):" || true
     docker compose logs --no-color --tail=200 web || true
@@ -72,7 +72,7 @@ formats_json="[${formats_json%,}]"
 log "POST /render entry=docs/index.adoc formats=${RENDER_FORMATS}…"
 resp=$(curl -sfS -H 'Content-Type: application/json' \
   -d "{\"entry\":\"docs/index.adoc\",\"formats\":${formats_json}}" \
-  http://localhost:8080/render)
+  http://localhost:8082/render)
 log "Réponse: ${resp}"
 
 # --- Vérifs artefacts ----------------------------------------------------------
