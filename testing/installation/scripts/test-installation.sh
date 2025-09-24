@@ -31,22 +31,22 @@ print_header() {
 
 print_success() {
     echo -e "${GREEN}✅ $1${NC}"
-    echo "[SUCCESS] $1" >> "$LOG_FILE"
+    [ -f "$LOG_FILE" ] && echo "[SUCCESS] $1" >> "$LOG_FILE"
 }
 
 print_warning() {
     echo -e "${YELLOW}⚠️  $1${NC}"
-    echo "[WARNING] $1" >> "$LOG_FILE"
+    [ -f "$LOG_FILE" ] && echo "[WARNING] $1" >> "$LOG_FILE"
 }
 
 print_error() {
     echo -e "${RED}❌ $1${NC}"
-    echo "[ERROR] $1" >> "$LOG_FILE"
+    [ -f "$LOG_FILE" ] && echo "[ERROR] $1" >> "$LOG_FILE"
 }
 
 print_info() {
     echo -e "${BLUE}ℹ️  $1${NC}"
-    echo "[INFO] $1" >> "$LOG_FILE"
+    [ -f "$LOG_FILE" ] && echo "[INFO] $1" >> "$LOG_FILE"
 }
 
 setup_test_environment() {
