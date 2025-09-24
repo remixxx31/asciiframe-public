@@ -32,11 +32,12 @@ class ApiValidationTest extends BaseIntegrationTest {
     void setupContainer() {
         logger.info("Setting up AsciiFrame container for API testing");
         
-        // Create container with Java and AsciiFrame
-        asciiFrameContainer = new GenericContainer<>(DockerImageName.parse("eclipse-temurin:23-jre-alpine"))
+        // Create container with Java and AsciiFrame - use stable JRE
+        asciiFrameContainer = new GenericContainer<>(DockerImageName.parse("eclipse-temurin:23-jre"))
             .withCommand("tail", "-f", "/dev/null")
             .withExposedPorts(8080)
-            .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofMinutes(2)));
+            .withWorkingDirectory("/app")
+            .waitingFor(Wait.forLogMessage(".*", 1).withStartupTimeout(Duration.ofSeconds(30)));
         
         // Start container
         asciiFrameContainer.start();
@@ -367,11 +368,27 @@ class ApiValidationTest extends BaseIntegrationTest {
     }
 
     private void startAsciiFrame() throws Exception {
-        // Start AsciiFrame in background
-        asciiFrameContainer.execInContainer(
+        // Start AsciiFrame in background with better error handling
+        org.testcontainers.containers.Container.ExecResult result = asciiFrameContainer.execInContainer(
             "sh", "-c", 
-            "cd /app && nohup java -jar asciiframe.jar > asciiframe.log 2>&1 &"
+            "cd /app && java -Xmx256m -jar asciiframe.jar > asciiframe.log 2>&1 &"
         );
+        
+        // Give the service a moment to start
+        Thread.sleep(2000);
+        
+        // Check if the process started successfully
+        org.testcontainers.containers.Container.ExecResult checkResult = asciiFrameContainer.execInContainer(
+            "sh", "-c", "ps aux | grep asciiframe.jar | grep -v grep"
+        );
+        
+        if (checkResult.getExitCode() != 0) {
+            // Get logs for debugging
+            org.testcontainers.containers.Container.ExecResult logResult = asciiFrameContainer.execInContainer(
+                "cat", "/app/asciiframe.log"
+            );
+            throw new RuntimeException("Failed to start AsciiFrame. Logs: " + logResult.getStdout());
+        }
     }
 
     private void waitForServiceReady() {

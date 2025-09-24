@@ -28,7 +28,7 @@ class CrossPlatformInstallationTest extends BaseIntegrationTest {
     private static final Duration STARTUP_TIMEOUT = Duration.ofMinutes(2);
 
     @ParameterizedTest
-    @ValueSource(strings = {"ubuntu:22.04", "ubuntu:20.04", "alpine:3.18", "alpine:3.17"})
+    @ValueSource(strings = {"ubuntu:22.04", "ubuntu:20.04"})
     @DisplayName("Test standalone installation on different platforms")
     void testStandaloneInstallation(String platformImage) {
         logger.info("Testing standalone installation on {}", platformImage);

@@ -178,7 +178,7 @@ class DockerInstallationTest extends BaseIntegrationTest {
     void testContainerResourceLimits() throws Exception {
         logger.info("Testing container resource limits");
         
-        try (GenericContainer<?> asciiFrame = new GenericContainer<>("eclipse-temurin:23-jre-alpine")
+        try (GenericContainer<?> asciiFrame = new GenericContainer<>("eclipse-temurin:23-jre")
                 .withCommand("tail", "-f", "/dev/null")
                 .withExposedPorts(8080)
                 // Set resource limits
@@ -241,7 +241,7 @@ class DockerInstallationTest extends BaseIntegrationTest {
         logger.info("Testing container networking");
         
         // Test custom network setup
-        try (GenericContainer<?> asciiFrame = new GenericContainer<>("eclipse-temurin:23-jre-alpine")
+        try (GenericContainer<?> asciiFrame = new GenericContainer<>("eclipse-temurin:23-jre")
                 .withCommand("tail", "-f", "/dev/null")
                 .withExposedPorts(8080)
                 .withNetworkAliases("asciiframe-app")
@@ -290,7 +290,7 @@ class DockerInstallationTest extends BaseIntegrationTest {
             java.nio.file.Files.write(testDoc.toPath(), 
                 createTestDocument("Volume Mount Test").getBytes());
             
-            try (GenericContainer<?> asciiFrame = new GenericContainer<>("eclipse-temurin:23-jre-alpine")
+            try (GenericContainer<?> asciiFrame = new GenericContainer<>("eclipse-temurin:23-jre")
                     .withCommand("tail", "-f", "/dev/null")
                     .withExposedPorts(8080)
                     .withFileSystemBind(tempDocs.getAbsolutePath(), "/app/docs")
@@ -368,7 +368,7 @@ class DockerInstallationTest extends BaseIntegrationTest {
 
     private String createTestDockerfile() {
         return """
-            FROM eclipse-temurin:23-jre-alpine
+            FROM eclipse-temurin:23-jre
             
             WORKDIR /app
             
@@ -393,7 +393,7 @@ class DockerInstallationTest extends BaseIntegrationTest {
 
     private String createSimpleDockerfile() {
         return """
-            FROM eclipse-temurin:23-jre-alpine
+            FROM eclipse-temurin:23-jre
             COPY app-fat.jar /app/asciiframe.jar
             WORKDIR /app
             EXPOSE 8080
