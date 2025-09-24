@@ -46,7 +46,15 @@ public class WatcherService {
     private void ensureDocsDirectoryExists() {
         try {
             String docsPath = cfg.includePaths().isEmpty() ? "docs" : cfg.includePaths().get(0);
-            Path p = Paths.get(docsPath).toAbsolutePath().normalize();
+            
+            Path p;
+            if (Paths.get(docsPath).isAbsolute()) {
+                p = Paths.get(docsPath).normalize();
+            } else {
+                // For relative paths, resolve against current user.dir (handles test scenarios)
+                String userDir = System.getProperty("user.dir");
+                p = Paths.get(userDir).resolve(docsPath).normalize();
+            }
             
             if (!Files.exists(p)) {
                 Files.createDirectories(p);
@@ -61,7 +69,14 @@ public class WatcherService {
     private void loop() {
         try (WatchService ws = FileSystems.getDefault().newWatchService()) {
             String docsPath = cfg.includePaths().isEmpty() ? "docs" : cfg.includePaths().get(0);
-            Path p = Paths.get(docsPath).toAbsolutePath().normalize();
+            
+            Path p;
+            if (Paths.get(docsPath).isAbsolute()) {
+                p = Paths.get(docsPath).normalize();
+            } else {
+                String userDir = System.getProperty("user.dir");
+                p = Paths.get(userDir).resolve(docsPath).normalize();
+            }
             
             // Verify the directory exists (should have been created in start())
             if (!Files.exists(p) || !Files.isDirectory(p)) {
@@ -87,7 +102,14 @@ public class WatcherService {
     
     private void pollingLoop() {
         String docsPath = cfg.includePaths().isEmpty() ? "docs" : cfg.includePaths().get(0);
-        Path p = Paths.get(docsPath).toAbsolutePath().normalize();
+        
+        Path p;
+        if (Paths.get(docsPath).isAbsolute()) {
+            p = Paths.get(docsPath).normalize();
+        } else {
+            String userDir = System.getProperty("user.dir");
+            p = Paths.get(userDir).resolve(docsPath).normalize();
+        }
         
         if (!Files.exists(p) || !Files.isDirectory(p)) {
             System.err.println("❌ Directory does not exist for polling: " + p);
