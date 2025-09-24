@@ -3,7 +3,6 @@ package co.remi.asciiframe;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
@@ -86,7 +85,6 @@ class WatcherServiceTest {
     }
 
     @Test
-    @Disabled("Temporarily disabled - needs configuration fix for tempDir")
     void testDocsDirectoryIsCreatedIfMissing(@TempDir Path tempDir) throws IOException, InterruptedException {
         // Change to temp directory to test docs creation
         System.setProperty("user.dir", tempDir.toString());
@@ -105,7 +103,6 @@ class WatcherServiceTest {
     }
 
     @Test
-    @Disabled("Temporarily disabled - needs configuration fix for tempDir")
     void testFileModificationTriggersCallback(@TempDir Path tempDir) throws IOException, InterruptedException {
         // Set up working directory
         System.setProperty("user.dir", tempDir.toString());
@@ -137,7 +134,6 @@ class WatcherServiceTest {
     }
 
     @Test
-    @Disabled("Temporarily disabled - needs configuration fix for tempDir")
     void testFileCreationTriggersCallback(@TempDir Path tempDir) throws IOException, InterruptedException {
         System.setProperty("user.dir", tempDir.toString());
         
@@ -167,7 +163,6 @@ class WatcherServiceTest {
     }
 
     @Test
-    @Disabled("Temporarily disabled - needs configuration fix for tempDir")
     void testFileDeletionTriggersCallback(@TempDir Path tempDir) throws IOException, InterruptedException {
         System.setProperty("user.dir", tempDir.toString());
         
@@ -198,7 +193,6 @@ class WatcherServiceTest {
     }
 
     @Test
-    @Disabled("Temporarily disabled - needs configuration fix for tempDir")
     void testDebouncingPreventsExcessiveCallbacks(@TempDir Path tempDir) throws IOException, InterruptedException {
         System.setProperty("user.dir", tempDir.toString());
         
@@ -237,7 +231,6 @@ class WatcherServiceTest {
      * similar to how it would work in actual usage.
      */
     @Test
-    @Disabled("Temporarily disabled - needs configuration fix for tempDir")
     void testIntegrationWithRealFileOperations(@TempDir Path tempDir) throws IOException, InterruptedException {
         System.setProperty("user.dir", tempDir.toString());
         

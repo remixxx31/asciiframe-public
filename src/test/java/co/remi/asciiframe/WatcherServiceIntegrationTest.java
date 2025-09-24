@@ -1,7 +1,6 @@
 package co.remi.asciiframe;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
@@ -23,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class WatcherServiceIntegrationTest {
 
     @Test
-    @Disabled("Temporarily disabled - needs configuration fix for tempDir")
     void testWatcherServiceInitializesCorrectly(@TempDir Path tempDir) throws IOException, InterruptedException {
         // Set working directory to temp dir
         String originalDir = System.getProperty("user.dir");
