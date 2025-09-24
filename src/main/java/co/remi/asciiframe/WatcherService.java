@@ -28,19 +28,33 @@ public class WatcherService {
         
         // Only start file watching if enabled in config
         if (cfg.watchEnabled()) {
-            // Temporarily use polling for all environments to test reliability
-            System.out.println("ℹ️ Using polling-based file watching for reliability");
-            exec.submit(this::pollingLoop);
+            if (IS_CI) {
+                System.err.println("ℹ️ CI environment detected, using polling fallback for file watching");
+                exec.submit(this::pollingLoop);
+            } else {
+                System.err.println("ℹ️ Using NIO file watching for local development");
+                exec.submit(this::loop);
+            }
         }
     }
     
     private static boolean detectCI() {
-        return System.getenv("CI") != null || 
-               System.getenv("GITHUB_ACTIONS") != null ||
-               System.getenv("JENKINS_URL") != null ||
-               System.getenv("TRAVIS") != null ||
-               System.getenv("CIRCLECI") != null ||
-               System.getProperty("java.awt.headless", "false").equals("true");
+        boolean isCI = System.getenv("CI") != null || 
+                      System.getenv("GITHUB_ACTIONS") != null ||
+                      System.getenv("JENKINS_URL") != null ||
+                      System.getenv("TRAVIS") != null ||
+                      System.getenv("CIRCLECI") != null ||
+                      System.getenv("BUILD_NUMBER") != null ||
+                      "true".equals(System.getenv("CI")) ||
+                      "true".equals(System.getenv("CONTINUOUS_INTEGRATION")) ||
+                      System.getProperty("java.awt.headless", "false").equals("true");
+        
+        if (isCI) {
+            System.err.println("ℹ️ CI environment detected - CI=" + System.getenv("CI") + 
+                             ", GITHUB_ACTIONS=" + System.getenv("GITHUB_ACTIONS"));
+        }
+        
+        return isCI;
     }
     
     private void ensureDocsDirectoryExists() {
@@ -116,20 +130,31 @@ public class WatcherService {
             return;
         }
         
-        System.out.println("ℹ️ Starting polling-based file watching for: " + p);
+        System.err.println("ℹ️ Starting polling-based file watching for: " + p);
         long lastModified = getDirectoryLastModified(p);
+        System.err.println("ℹ️ Initial lastModified: " + lastModified);
         
         try {
+            int pollCount = 0;
             while (true) {
                 Thread.sleep(100); // Poll every 100ms
                 long currentModified = getDirectoryLastModified(p);
                 
+                pollCount++;
+                if (pollCount % 50 == 0) { // Log every 5 seconds
+                    System.err.println("ℹ️ Polling check #" + pollCount + ", currentModified: " + currentModified + ", lastModified: " + lastModified);
+                }
+                
                 if (currentModified > lastModified) {
+                    System.err.println("ℹ️ File change detected! currentModified: " + currentModified + ", lastModified: " + lastModified);
                     lastModified = currentModified;
                     
                     // Trigger debounced callback
                     if (pending != null) pending.cancel(false);
-                    pending = exec.schedule(() -> onChange.get(), cfg.debounceMs(), TimeUnit.MILLISECONDS);
+                    pending = exec.schedule(() -> {
+                        System.err.println("ℹ️ Executing callback after debounce");
+                        return onChange.get();
+                    }, cfg.debounceMs(), TimeUnit.MILLISECONDS);
                 }
             }
         } catch (InterruptedException e) {
