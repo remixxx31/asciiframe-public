@@ -25,12 +25,14 @@ public class WatcherService {
 
     private void loop() {
         try (WatchService ws = FileSystems.getDefault().newWatchService()) {
-            Path p = Paths.get("docs");
+            // Use configured path instead of hardcoded "docs"
+            String docsPath = cfg.includePaths().isEmpty() ? "docs" : cfg.includePaths().get(0);
+            Path p = Paths.get(docsPath);
             // Create the docs directory if it doesn't exist to avoid NoSuchFileException
             if (!Files.exists(p)) {
                 try {
                     Files.createDirectories(p);
-                    System.out.println("ℹ️ Created missing docs directory at runtime");
+                    System.out.println("ℹ️ Created missing docs directory at runtime: " + p.toAbsolutePath());
                 } catch (Exception e) {
                     System.err.println("❌ Failed to create docs directory: " + e.getMessage());
                     // Continue: registering will likely fail, but we don't want to crash the service

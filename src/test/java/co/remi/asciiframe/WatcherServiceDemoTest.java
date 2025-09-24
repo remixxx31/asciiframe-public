@@ -26,7 +26,8 @@ class WatcherServiceDemoTest {
         try {
             System.setProperty("user.dir", tempDir.toString());
             
-            // Create configuration with reasonable debounce time
+            // Create configuration with reasonable debounce time using absolute path
+            String docsPath = tempDir.resolve("docs").toString();
             Config config = new Config(
                 "docs/index.adoc",
                 "build_artifacts",
@@ -35,7 +36,7 @@ class WatcherServiceDemoTest {
                 true,
                 200, // 200ms debounce
                 8080,
-                List.of("docs"),
+                List.of(docsPath),
                 ".cache/diagrams",
                 null
             );
@@ -117,7 +118,8 @@ class WatcherServiceDemoTest {
             int estimatedRawEvents = 18000; // Conservative estimate based on demo
             System.out.println("📈 Raw file watching would generate ~" + estimatedRawEvents + " events");
             
-            // Test 2: AsciiFrame WatcherService with debouncing
+            // Test 2: AsciiFrame WatcherService with debouncing using absolute path
+            String docsPath = tempDir.resolve("docs").toString();
             Config config = new Config(
                 "docs/index.adoc",
                 "build_artifacts",
@@ -126,7 +128,7 @@ class WatcherServiceDemoTest {
                 true,
                 100, // 100ms debounce
                 8080,
-                List.of("docs"),
+                List.of(docsPath),
                 ".cache/diagrams",
                 null
             );
