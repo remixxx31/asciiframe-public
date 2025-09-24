@@ -55,7 +55,7 @@ theme:
 
 diagrams:
   engine: kroki
-  url: http://localhost:8000
+  url: http://localhost:8001
 
 watch:
   enabled: true

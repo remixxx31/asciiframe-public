@@ -9,8 +9,9 @@ RUN dnf update -y && dnf install -y \
     unzip \
     java-21-openjdk \
     docker \
-    docker-compose \
-    && dnf clean all
+    python3-pip \
+    && dnf clean all \
+    && pip3 install docker-compose
 
 # Create test user (non-root)
 RUN useradd -m -s /bin/bash testuser

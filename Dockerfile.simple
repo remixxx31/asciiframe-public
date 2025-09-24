@@ -1,5 +1,5 @@
 # Simple runtime Dockerfile with pre-built JAR
-FROM eclipse-temurin:24-jre-alpine
+FROM eclipse-temurin:23-jre-alpine
 
 LABEL maintainer="AsciiFrame Team"
 LABEL org.opencontainers.image.title="AsciiFrame"

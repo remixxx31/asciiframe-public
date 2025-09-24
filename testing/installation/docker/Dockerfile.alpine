@@ -8,9 +8,9 @@ RUN apk add --no-cache \
     git \
     unzip \
     bash \
-    openjdk21-jre \
+    openjdk21-jre-headless \
     docker \
-    docker-cli-compose
+    docker-compose
 
 # Create test user (non-root)
 RUN adduser -D -s /bin/bash testuser

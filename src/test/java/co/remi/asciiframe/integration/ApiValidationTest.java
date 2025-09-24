@@ -33,7 +33,7 @@ class ApiValidationTest extends BaseIntegrationTest {
         logger.info("Setting up AsciiFrame container for API testing");
         
         // Create container with Java and AsciiFrame
-        asciiFrameContainer = new GenericContainer<>(DockerImageName.parse("openjdk:23-jdk-slim"))
+        asciiFrameContainer = new GenericContainer<>(DockerImageName.parse("eclipse-temurin:23-jre-alpine"))
             .withCommand("tail", "-f", "/dev/null")
             .withExposedPorts(8080)
             .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofMinutes(2)));
