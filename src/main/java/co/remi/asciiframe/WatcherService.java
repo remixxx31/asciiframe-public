@@ -8,7 +8,8 @@ import java.util.function.Supplier;
 public class WatcherService {
     private final Config cfg;
     private final Supplier<Void> onChange;
-    private final ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService pollingExec = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService callbackExec = Executors.newSingleThreadScheduledExecutor();
     private volatile boolean started = false;
     private ScheduledFuture<?> pending;
     private volatile boolean useFallbackPolling = false;
@@ -37,7 +38,7 @@ public class WatcherService {
         if (cfg.watchEnabled()) {
             // Force polling for all environments until tests are stable
             lastDebugMessage = "WatcherService: Using forced polling mode, watchEnabled=" + cfg.watchEnabled();
-            exec.submit(this::pollingLoop);
+            pollingExec.submit(this::pollingLoop);
         } else {
             lastDebugMessage = "WatcherService: File watching is disabled in config, watchEnabled=" + cfg.watchEnabled();
         }
@@ -110,7 +111,7 @@ public class WatcherService {
             while (true) {
                 WatchKey key = ws.take();
                 if (pending != null) pending.cancel(false);
-                pending = exec.schedule(() -> onChange.get(), cfg.debounceMs(), TimeUnit.MILLISECONDS);
+                pending = callbackExec.schedule(() -> onChange.get(), cfg.debounceMs(), TimeUnit.MILLISECONDS);
                 key.reset();
             }
         } catch (Exception e) {
@@ -151,9 +152,9 @@ public class WatcherService {
                     lastDebugMessage = "File change detected! Poll#" + pollCount + " New: " + currentModified + ", Old: " + lastModified;
                     lastModified = currentModified;
                     
-                    // Trigger debounced callback
+                    // Trigger debounced callback using separate executor
                     if (pending != null) pending.cancel(false);
-                    pending = exec.schedule(() -> {
+                    pending = callbackExec.schedule(() -> {
                         callbackExecutionCount++;
                         lastDebugMessage += " | Callback executed #" + callbackExecutionCount;
                         return onChange.get();
