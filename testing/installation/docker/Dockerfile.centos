@@ -1,5 +1,5 @@
-# Test environment: CentOS/RHEL-like system
-FROM centos:stream9
+# Test environment: CentOS/RHEL-like system  
+FROM quay.io/centos/centos:stream9
 
 # Install system dependencies for testing
 RUN dnf update -y && dnf install -y \
