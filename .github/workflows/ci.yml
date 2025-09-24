@@ -153,7 +153,7 @@ jobs:
             ./gradlew installationTest --no-daemon
             ;;
           "docker")
-            ./gradlew test --tests "*DockerInstallationTest" --no-daemon
+            ./gradlew test --tests "*DockerInstallationTest" --no-daemon -Dtest.includeTags=docker
             ;;
         esac
       env:

@@ -28,7 +28,7 @@ class CrossPlatformInstallationTest extends BaseIntegrationTest {
     private static final Duration STARTUP_TIMEOUT = Duration.ofMinutes(2);
 
     @ParameterizedTest
-    @ValueSource(strings = {"eclipse-temurin:23-jre"})  
+    @ValueSource(strings = {"openjdk:21-jre-slim"})  
     @DisplayName("Test standalone installation on Java-enabled platforms")
     void testStandaloneInstallation(String platformImage) {
         logger.info("Testing standalone installation on {}", platformImage);
@@ -126,7 +126,7 @@ class CrossPlatformInstallationTest extends BaseIntegrationTest {
     void testPermissionHandling() {
         logger.info("Testing installation with restricted permissions");
         
-        try (GenericContainer<?> container = createTestContainer("eclipse-temurin:23-jre")) {
+        try (GenericContainer<?> container = createTestContainer("openjdk:21-jre-slim")) {
             container.start();
             waitForContainerReady(container);
             
@@ -179,7 +179,7 @@ class CrossPlatformInstallationTest extends BaseIntegrationTest {
     void testResourceCleanup() {
         logger.info("Testing resource cleanup after installation");
         
-        try (GenericContainer<?> container = createTestContainer("eclipse-temurin:23-jre")) {
+        try (GenericContainer<?> container = createTestContainer("openjdk:21-jre-slim")) {
             container.start();
             waitForContainerReady(container);
             

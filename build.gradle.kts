@@ -54,7 +54,12 @@ tasks.withType<JavaCompile> {
 
 tasks.test {
     useJUnitPlatform {
-        excludeTags("integration", "installation", "docker")
+        val includeTags = System.getProperty("test.includeTags")
+        if (includeTags == null) {
+            excludeTags("integration", "installation", "docker")
+        } else {
+            includeTags(includeTags.split(","))
+        }
     }
     testLogging {
         events("passed", "skipped", "failed")

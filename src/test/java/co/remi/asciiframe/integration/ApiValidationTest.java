@@ -32,8 +32,8 @@ class ApiValidationTest extends BaseIntegrationTest {
     void setupContainer() {
         logger.info("Setting up AsciiFrame container for API testing");
         
-        // Create container with Java and AsciiFrame - use stable JRE
-        asciiFrameContainer = new GenericContainer<>(DockerImageName.parse("eclipse-temurin:23-jre"))
+        // Create container with Java and AsciiFrame - use lightweight stable JRE  
+        asciiFrameContainer = new GenericContainer<>(DockerImageName.parse("openjdk:21-jre-slim"))
             .withCommand("tail", "-f", "/dev/null")
             .withExposedPorts(8080)
             .withWorkingDirectory("/app")
