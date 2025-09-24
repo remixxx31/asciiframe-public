@@ -13,6 +13,13 @@ public class WatcherService {
     private ScheduledFuture<?> pending;
     private volatile boolean useFallbackPolling = false;
     private static final boolean IS_CI = detectCI();
+    
+    // Debug tracking fields for tests
+    public static volatile String lastDebugMessage = "";
+    public static volatile boolean pollingStarted = false;
+    public static volatile long pollCount = 0;
+    public static volatile long changeDetectionCount = 0;
+    public static volatile long callbackExecutionCount = 0;
 
     public WatcherService(Config cfg, Runnable callback) {
         this.cfg = cfg;
@@ -29,10 +36,10 @@ public class WatcherService {
         // Only start file watching if enabled in config
         if (cfg.watchEnabled()) {
             // Force polling for all environments until tests are stable
-            System.out.println("WatcherService: Using forced polling mode for reliability");
+            lastDebugMessage = "WatcherService: Using forced polling mode, watchEnabled=" + cfg.watchEnabled();
             exec.submit(this::pollingLoop);
         } else {
-            System.out.println("WatcherService: File watching is disabled in config");
+            lastDebugMessage = "WatcherService: File watching is disabled in config, watchEnabled=" + cfg.watchEnabled();
         }
     }
     
@@ -128,23 +135,27 @@ public class WatcherService {
             return;
         }
         
-        System.out.println("WatcherService: Starting polling for directory: " + p);
+        pollingStarted = true;
+        lastDebugMessage = "Starting polling for directory: " + p;
         long lastModified = getDirectoryLastModified(p);
-        System.out.println("WatcherService: Initial lastModified: " + lastModified);
+        lastDebugMessage += ", initial lastModified: " + lastModified;
         
         try {
             while (true) {
                 Thread.sleep(50); // Poll every 50ms for faster response
+                pollCount++;
                 long currentModified = getDirectoryLastModified(p);
                 
                 if (currentModified > lastModified) {
-                    System.out.println("WatcherService: File change detected! New: " + currentModified + ", Old: " + lastModified);
+                    changeDetectionCount++;
+                    lastDebugMessage = "File change detected! Poll#" + pollCount + " New: " + currentModified + ", Old: " + lastModified;
                     lastModified = currentModified;
                     
                     // Trigger debounced callback
                     if (pending != null) pending.cancel(false);
                     pending = exec.schedule(() -> {
-                        System.out.println("WatcherService: Executing callback after debounce delay");
+                        callbackExecutionCount++;
+                        lastDebugMessage += " | Callback executed #" + callbackExecutionCount;
                         return onChange.get();
                     }, cfg.debounceMs(), TimeUnit.MILLISECONDS);
                 }
