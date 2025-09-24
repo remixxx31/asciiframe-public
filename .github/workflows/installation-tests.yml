@@ -56,6 +56,7 @@ jobs:
         # Run test container
         docker run --name test-${{ matrix.platform }} \
           --privileged \
+          --tmpfs /run --tmpfs /run/lock \
           -v /var/run/docker.sock:/var/run/docker.sock \
           -e INSTALL_MODES="${{ env.INSTALL_MODES }}" \
           -e SKIP_CLEANUP=true \

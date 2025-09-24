@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y \
     docker-compose \
     && rm -rf /var/lib/apt/lists/*
 
+# Workaround for resolv.conf issues with systemd in privileged containers
+RUN rm -f /etc/resolv.conf && ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf || true
+
 # Create test user (non-root)
 RUN useradd -m -s /bin/bash testuser
 USER testuser
