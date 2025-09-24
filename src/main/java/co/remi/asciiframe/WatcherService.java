@@ -28,13 +28,11 @@ public class WatcherService {
         
         // Only start file watching if enabled in config
         if (cfg.watchEnabled()) {
-            if (IS_CI) {
-                System.err.println("ℹ️ CI environment detected, using polling fallback for file watching");
-                exec.submit(this::pollingLoop);
-            } else {
-                System.err.println("ℹ️ Using NIO file watching for local development");
-                exec.submit(this::loop);
-            }
+            // Force polling for all environments until tests are stable
+            System.out.println("WatcherService: Using forced polling mode for reliability");
+            exec.submit(this::pollingLoop);
+        } else {
+            System.out.println("WatcherService: File watching is disabled in config");
         }
     }
     
@@ -130,29 +128,23 @@ public class WatcherService {
             return;
         }
         
-        System.err.println("ℹ️ Starting polling-based file watching for: " + p);
+        System.out.println("WatcherService: Starting polling for directory: " + p);
         long lastModified = getDirectoryLastModified(p);
-        System.err.println("ℹ️ Initial lastModified: " + lastModified);
+        System.out.println("WatcherService: Initial lastModified: " + lastModified);
         
         try {
-            int pollCount = 0;
             while (true) {
-                Thread.sleep(100); // Poll every 100ms
+                Thread.sleep(50); // Poll every 50ms for faster response
                 long currentModified = getDirectoryLastModified(p);
                 
-                pollCount++;
-                if (pollCount % 50 == 0) { // Log every 5 seconds
-                    System.err.println("ℹ️ Polling check #" + pollCount + ", currentModified: " + currentModified + ", lastModified: " + lastModified);
-                }
-                
                 if (currentModified > lastModified) {
-                    System.err.println("ℹ️ File change detected! currentModified: " + currentModified + ", lastModified: " + lastModified);
+                    System.out.println("WatcherService: File change detected! New: " + currentModified + ", Old: " + lastModified);
                     lastModified = currentModified;
                     
                     // Trigger debounced callback
                     if (pending != null) pending.cancel(false);
                     pending = exec.schedule(() -> {
-                        System.err.println("ℹ️ Executing callback after debounce");
+                        System.out.println("WatcherService: Executing callback after debounce delay");
                         return onChange.get();
                     }, cfg.debounceMs(), TimeUnit.MILLISECONDS);
                 }
@@ -168,18 +160,33 @@ public class WatcherService {
     
     private long getDirectoryLastModified(Path dir) {
         try {
-            return Files.walk(dir, 1)
+            long maxModified = Files.walk(dir, 1)
                     .filter(Files::isRegularFile)
                     .mapToLong(path -> {
                         try {
-                            return Files.getLastModifiedTime(path).toMillis();
+                            long modified = Files.getLastModifiedTime(path).toMillis();
+                            return modified;
                         } catch (Exception e) {
+                            System.out.println("WatcherService: Error reading lastModified for " + path + ": " + e.getMessage());
                             return 0;
                         }
                     })
                     .max()
-                    .orElse(System.currentTimeMillis());
+                    .orElse(0L);
+            
+            // If no files exist, return directory's own modification time
+            if (maxModified == 0L) {
+                try {
+                    maxModified = Files.getLastModifiedTime(dir).toMillis();
+                } catch (Exception e) {
+                    System.out.println("WatcherService: Error reading directory lastModified: " + e.getMessage());
+                    maxModified = System.currentTimeMillis();
+                }
+            }
+            
+            return maxModified;
         } catch (Exception e) {
+            System.out.println("WatcherService: Error in getDirectoryLastModified: " + e.getMessage());
             return System.currentTimeMillis();
         }
     }
